@@ -1,0 +1,1 @@
+These are my notes! I am making them so that I can demonstate git use.
