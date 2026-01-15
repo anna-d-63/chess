@@ -62,45 +62,59 @@ public class ChessPiece {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
+    }
+
+    @Override
     public String toString() {
         if(type == PieceType.KING){
             String symb = "k";
-            if(pieceColor == ChessGame.TeamColor.WHITE){
+            if(pieceColor == ChessGame.TeamColor.BLACK){
                 return symb.toUpperCase();
             }
             return symb;
         }
         else if(type == PieceType.QUEEN){
             String symb = "q";
-            if(pieceColor == ChessGame.TeamColor.WHITE){
+            if(pieceColor == ChessGame.TeamColor.BLACK){
                 return symb.toUpperCase();
             }
             return symb;
         }
         else if(type == PieceType.ROOK){
             String symb = "r";
-            if(pieceColor == ChessGame.TeamColor.WHITE){
+            if(pieceColor == ChessGame.TeamColor.BLACK){
                 return symb.toUpperCase();
             }
             return symb;
         }
         else if(type == PieceType.BISHOP){
             String symb = "b";
-            if(pieceColor == ChessGame.TeamColor.WHITE){
+            if(pieceColor == ChessGame.TeamColor.BLACK){
                 return symb.toUpperCase();
             }
             return symb;
         }
         else if(type == PieceType.KNIGHT){
             String symb = "n";
-            if(pieceColor == ChessGame.TeamColor.WHITE){
+            if(pieceColor == ChessGame.TeamColor.BLACK){
                 return symb.toUpperCase();
             }
             return symb;
         }
         else if(type == PieceType.PAWN){
             String symb = "p";
-            if(pieceColor == ChessGame.TeamColor.WHITE){
+            if(pieceColor == ChessGame.TeamColor.BLACK){
                 return symb.toUpperCase();
             }
             return symb;
