@@ -79,42 +79,42 @@ public class ChessPiece {
     public String toString() {
         if(type == PieceType.KING){
             String symb = "k";
-            if(pieceColor == ChessGame.TeamColor.BLACK){
+            if(pieceColor == ChessGame.TeamColor.WHITE){
                 return symb.toUpperCase();
             }
             return symb;
         }
         else if(type == PieceType.QUEEN){
             String symb = "q";
-            if(pieceColor == ChessGame.TeamColor.BLACK){
+            if(pieceColor == ChessGame.TeamColor.WHITE){
                 return symb.toUpperCase();
             }
             return symb;
         }
         else if(type == PieceType.ROOK){
             String symb = "r";
-            if(pieceColor == ChessGame.TeamColor.BLACK){
+            if(pieceColor == ChessGame.TeamColor.WHITE){
                 return symb.toUpperCase();
             }
             return symb;
         }
         else if(type == PieceType.BISHOP){
             String symb = "b";
-            if(pieceColor == ChessGame.TeamColor.BLACK){
+            if(pieceColor == ChessGame.TeamColor.WHITE){
                 return symb.toUpperCase();
             }
             return symb;
         }
         else if(type == PieceType.KNIGHT){
             String symb = "n";
-            if(pieceColor == ChessGame.TeamColor.BLACK){
+            if(pieceColor == ChessGame.TeamColor.WHITE){
                 return symb.toUpperCase();
             }
             return symb;
         }
         else if(type == PieceType.PAWN){
             String symb = "p";
-            if(pieceColor == ChessGame.TeamColor.BLACK){
+            if(pieceColor == ChessGame.TeamColor.WHITE){
                 return symb.toUpperCase();
             }
             return symb;

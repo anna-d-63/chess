@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -52,6 +53,7 @@ public class ChessBoard {
         for(int j = 0; j < 8; j++){
             squares[0][j] = new ChessPiece(colors[0], pieces[j]);
         }
+
         //white second row
         for(int j = 0; j < 8; j++) {
             squares[1][j] = new ChessPiece(colors[0], pieces[8]);
@@ -68,10 +70,45 @@ public class ChessBoard {
         for(int j = 0; j < 8; j++){
             squares[6][j] = new ChessPiece(colors[1], pieces[8]);
         }
+
         // black first row
         for(int j = 0; j < 8; j++){
             squares[7][j] = new ChessPiece(colors[1], pieces[j]);
         }
+    }
+    private static final Map<Character, ChessPiece.PieceType> CHAR_TO_TYPE_MAP = Map.of(
+            'p', ChessPiece.PieceType.PAWN,
+            'n', ChessPiece.PieceType.KNIGHT,
+            'r', ChessPiece.PieceType.ROOK,
+            'q', ChessPiece.PieceType.QUEEN,
+            'k', ChessPiece.PieceType.KING,
+            'b', ChessPiece.PieceType.BISHOP);
+
+    public static ChessBoard loadBoard(String boardText) {
+        var board = new ChessBoard();
+        int row = 8;
+        int column = 1;
+        for (var c : boardText.toCharArray()) {
+            switch (c) {
+                case '\n' -> {
+                    column = 1;
+                    row--;
+                }
+                case ' ' -> column++;
+                case '|' -> {
+                }
+                default -> {
+                    ChessGame.TeamColor color = Character.isLowerCase(c) ? ChessGame.TeamColor.BLACK
+                            : ChessGame.TeamColor.WHITE;
+                    var type = CHAR_TO_TYPE_MAP.get(Character.toLowerCase(c));
+                    var position = new ChessPosition(row, column);
+                    var piece = new ChessPiece(color, type);
+                    board.addPiece(position, piece);
+                    column++;
+                }
+            }
+        }
+        return board;
     }
 
     @Override
@@ -91,9 +128,6 @@ public class ChessBoard {
             board.append('\n');
         }
         return board.toString();
-//        return "ChessBoard!!!!{" +
-//                "squares=" + Arrays.toString(squares) +
-//                '}';
     }
 
     @Override
