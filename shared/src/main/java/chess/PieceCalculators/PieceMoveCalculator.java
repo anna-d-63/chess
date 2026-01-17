@@ -15,42 +15,69 @@ public class PieceMoveCalculator {
         WEST
     }
 
-    public static boolean moveStraightOne(ChessBoard board, ChessPosition myPosition, Direction dir){
-        ChessGame.TeamColor myColor = board.getPiece(myPosition).getTeamColor();
+//    public static boolean moveStraightOne(ChessBoard board, ChessPosition myPosition, Direction dir){
+//        ChessGame.TeamColor myColor = board.getPiece(myPosition).getTeamColor();
+//        int row = myPosition.getRow();
+//        int col = myPosition.getColumn();
+//        if(dir == Direction.NORTH){row++;}
+//        else if(dir == Direction.EAST){col++;}
+//        else if(dir == Direction.SOUTH){row--;}
+//        else {col--;}
+//
+//        if(row > 8 || row < 1 || col > 8 || col < 1){return false;}
+//
+//        ChessPosition newPos = new ChessPosition(row, col);
+//        ChessPiece incomingPiece = board.getPiece(newPos);
+//
+//        if(incomingPiece == null){return true;}
+//        else return incomingPiece.getTeamColor() != myColor;
+//    }
+//
+//    public static boolean moveDiagonalOne(ChessBoard board, ChessPosition myPosition, Direction dir1, Direction dir2){
+//        ChessGame.TeamColor myColor = board.getPiece(myPosition).getTeamColor();
+//        int row = myPosition.getRow();
+//        int col = myPosition.getColumn();
+//        if(dir1 == Direction.NORTH || dir2 == Direction.NORTH){row++;}
+//        if(dir1 == Direction.EAST || dir2 == Direction.EAST){col++;}
+//        if(dir1 == Direction.SOUTH || dir2 == Direction.SOUTH){row--;}
+//        if(dir1 == Direction.WEST || dir2 == Direction.WEST){col--;}
+//
+//        if(row > 8 || row < 1 || col > 8 || col < 1){return false;}
+//
+//        ChessPosition newPos = new ChessPosition(row, col);
+//        ChessPiece incomingPiece = board.getPiece(newPos);
+//
+//        if(incomingPiece == null){return true;}
+//        else return incomingPiece.getTeamColor() != myColor;
+//    }
+
+    public static ChessPosition moveOneSquare(ChessPosition myPosition, Direction dir1, Direction dir2){
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
-        if(dir == Direction.NORTH){row++;}
-        else if(dir == Direction.EAST){col++;}
-        else if(dir == Direction.SOUTH){row--;}
-        else {col--;}
 
-        if(row > 8 || row < 1 || col > 8 || col < 1){return false;}
-
-        ChessPosition newPos = new ChessPosition(row, col);
-        ChessPiece incomingPiece = board.getPiece(newPos);
-
-        if(incomingPiece == null){return true;}
-        else return incomingPiece.getTeamColor() != myColor;
-    }
-
-    public static boolean moveDiagonalOne(ChessBoard board, ChessPosition myPosition, Direction dir1, Direction dir2){
-        ChessGame.TeamColor myColor = board.getPiece(myPosition).getTeamColor();
-        int row = myPosition.getRow();
-        int col = myPosition.getColumn();
         if(dir1 == Direction.NORTH || dir2 == Direction.NORTH){row++;}
         if(dir1 == Direction.EAST || dir2 == Direction.EAST){col++;}
         if(dir1 == Direction.SOUTH || dir2 == Direction.SOUTH){row--;}
         if(dir1 == Direction.WEST || dir2 == Direction.WEST){col--;}
 
-        if(row > 8 || row < 1 || col > 8 || col < 1){return false;}
-
-        ChessPosition newPos = new ChessPosition(row, col);
-        ChessPiece incomingPiece = board.getPiece(newPos);
-
-        if(incomingPiece == null){return true;}
-        else return incomingPiece.getTeamColor() != myColor;
+        return new ChessPosition(row, col);
     }
 
+    public static boolean legalMove(ChessBoard board, ChessPosition myPos, ChessPosition newPos, boolean canCapture){
+        ChessGame.TeamColor myColor = board.getPiece(myPos).getTeamColor();
+        int row = newPos.getRow();
+        int col = newPos.getColumn();
+
+        if(row > 8 || row < 1 || col > 8 || col < 1){return false;} //can't move out of bounds
+
+        ChessPiece incomingPiece = board.getPiece(newPos);
+        if(incomingPiece != null){
+            if(canCapture){
+                return incomingPiece.getTeamColor() != myColor; //it's a legal move to capture the enemy color
+            } else {return false;} //mostly for a pawn because they can't capture by going forward
+        } else {return true;} //can move there if the space is empty
+
+    }
     /*
     Maybe I want more general piece moves in here, move forward, move diagonal, move sideways
 
