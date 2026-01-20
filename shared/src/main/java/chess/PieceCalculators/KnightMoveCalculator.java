@@ -20,18 +20,22 @@ public class KnightMoveCalculator extends PieceMoveCalculator{
 
         for(Direction dir : dirUpDown){
             forward = moveOneSquare(myPos, dir, null);
-            diagonal = moveOneSquare(forward, dirSideways[0], dirSideways[1]);
-            legal = legalMove(board, myPos, diagonal, true);
-            if(legal){
-                legalMoves.add(new ChessMove(myPos, diagonal, null));
+            for(Direction dir2 : dirSideways) {
+                diagonal = moveOneSquare(forward, dir, dir2);
+                legal = legalMove(board, myPos, diagonal, true);
+                if (legal) {
+                    legalMoves.add(new ChessMove(myPos, diagonal, null));
+                }
             }
         }
         for(Direction dir : dirSideways){
             forward = moveOneSquare(myPos, dir, null);
-            diagonal = moveOneSquare(forward, dirUpDown[0], dirUpDown[1]);
-            legal = legalMove(board, myPos, diagonal, true);
-            if(legal){
-                legalMoves.add(new ChessMove(myPos, diagonal, null));
+            for(Direction dir2 : dirUpDown) {
+                diagonal = moveOneSquare(forward, dir, dir2);
+                legal = legalMove(board, myPos, diagonal, true);
+                if (legal) {
+                    legalMoves.add(new ChessMove(myPos, diagonal, null));
+                }
             }
         }
         return legalMoves;
