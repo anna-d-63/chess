@@ -63,8 +63,7 @@ public class PieceMoveCalculator {
         return new ChessPosition(row, col);
     }
 
-    public static boolean legalMove(ChessBoard board, ChessPosition myPos, ChessPosition newPos, boolean canCapture){
-        ChessGame.TeamColor myColor = board.getPiece(myPos).getTeamColor();
+    public static boolean legalMove(ChessBoard board, ChessPosition myPos, ChessPosition newPos, boolean canCapture, ChessGame.TeamColor myColor){
         int row = newPos.getRow();
         int col = newPos.getColumn();
 
@@ -78,6 +77,12 @@ public class PieceMoveCalculator {
         } else {return true;} //can move there if the space is empty
 
     }
+    /*
+    right now my problem is that if it captures a piece, it doesn't know to end.
+    capturing a piece is a legal move but it doesn't realize that it shouldn't go any further.
+
+    maybe a captured piece flag? then legal move would have to return multiple values and I think that's bad code. but maybe its not.
+     */
     /*
     Maybe I want more general piece moves in here, move forward, move diagonal, move sideways
 
@@ -168,6 +173,12 @@ public class PieceMoveCalculator {
 
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return List.of();
+        ChessPiece piece = board.getPiece(myPosition);
+        if (piece.getPieceType() == ChessPiece.PieceType.BISHOP) {
+            return new BishopMoveCalculator().pieceMoves(board, myPosition);
+        }
+        else{
+            return List.of();
+        }
     }
 }

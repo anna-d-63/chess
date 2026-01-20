@@ -1,6 +1,7 @@
 package chess.PieceCalculators;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 
@@ -11,6 +12,7 @@ public class RookMoveCalculator extends PieceMoveCalculator{
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> legalMoves = new ArrayList<>();
+        ChessGame.TeamColor myColor = board.getPiece(myPosition).getTeamColor();
 
         boolean legal;
         ChessPosition myPos;
@@ -20,7 +22,7 @@ public class RookMoveCalculator extends PieceMoveCalculator{
             myPos = myPosition;
             while (legal) {
                 ChessPosition newPos = moveOneSquare(myPos, dir, null);
-                legal = legalMove(board, myPos, newPos, true);
+                legal = legalMove(board, myPos, newPos, true, myColor);
                 if (legal) {
                     legalMoves.add(new ChessMove(myPos, newPos, null));
                     myPos = newPos;

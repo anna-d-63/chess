@@ -1,6 +1,7 @@
 package chess.PieceCalculators;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 
@@ -11,20 +12,21 @@ public class KingMoveCalculator extends PieceMoveCalculator{
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPos) {
         Collection<ChessMove> legalMoves = new ArrayList<>();
         Direction[] directions = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTH};
+        ChessGame.TeamColor myColor = board.getPiece(myPos).getTeamColor();
 
         ChessPosition newPos;
         boolean legal;
 
         for(Direction dir : Direction.values()) {
             newPos = moveOneSquare(myPos, dir, null);
-            legal = legalMove(board, myPos, newPos, true);
+            legal = legalMove(board, myPos, newPos, true, myColor);
             if(legal){
                 legalMoves.add(new ChessMove(myPos, newPos, null));
             }
         }
         for(int i = 0; i < 4; i++) {
             newPos = moveOneSquare(myPos, directions[i], directions[i+1]);
-            legal = legalMove(board, myPos, newPos, true);
+            legal = legalMove(board, myPos, newPos, true, myColor);
             if(legal){
                 legalMoves.add(new ChessMove(myPos, newPos, null));
             }

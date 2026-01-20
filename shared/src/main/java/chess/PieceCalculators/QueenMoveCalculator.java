@@ -1,6 +1,7 @@
 package chess.PieceCalculators;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 
@@ -11,6 +12,7 @@ public class QueenMoveCalculator extends PieceMoveCalculator{    @Override
 public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
     Collection<ChessMove> legalMoves = new ArrayList<>();
     Direction[] directions = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTH};
+    ChessGame.TeamColor myColor = board.getPiece(myPosition).getTeamColor();
 
     boolean legal;
     ChessPosition myPos;
@@ -20,7 +22,7 @@ public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPositi
         myPos = myPosition;
         while (legal) {
             ChessPosition newPos = moveOneSquare(myPos, directions[i], directions[i+1]);
-            legal = legalMove(board, myPos, newPos, true);
+            legal = legalMove(board, myPos, newPos, true, myColor);
             if (legal) {
                 legalMoves.add(new ChessMove(myPos, newPos, null));
                 myPos = newPos;
@@ -34,7 +36,7 @@ public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPositi
         myPos = myPosition;
         while (legal) {
             ChessPosition newPos = moveOneSquare(myPos, dir, null);
-            legal = legalMove(board, myPos, newPos, true);
+            legal = legalMove(board, myPos, newPos, true, myColor);
             if (legal) {
                 legalMoves.add(new ChessMove(myPos, newPos, null));
                 myPos = newPos;

@@ -1,6 +1,7 @@
 package chess.PieceCalculators;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 
@@ -10,6 +11,7 @@ import java.util.Collection;
 public class KnightMoveCalculator extends PieceMoveCalculator{
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPos) {
         Collection<ChessMove> legalMoves = new ArrayList<>();
+        ChessGame.TeamColor myColor = board.getPiece(myPos).getTeamColor();
 
         Direction[] dirSideways = {Direction.EAST, Direction.WEST};
         Direction[] dirUpDown = {Direction.NORTH, Direction.SOUTH};
@@ -22,7 +24,7 @@ public class KnightMoveCalculator extends PieceMoveCalculator{
             forward = moveOneSquare(myPos, dir, null);
             for(Direction dir2 : dirSideways) {
                 diagonal = moveOneSquare(forward, dir, dir2);
-                legal = legalMove(board, myPos, diagonal, true);
+                legal = legalMove(board, myPos, diagonal, true, myColor);
                 if (legal) {
                     legalMoves.add(new ChessMove(myPos, diagonal, null));
                 }
@@ -32,7 +34,7 @@ public class KnightMoveCalculator extends PieceMoveCalculator{
             forward = moveOneSquare(myPos, dir, null);
             for(Direction dir2 : dirUpDown) {
                 diagonal = moveOneSquare(forward, dir, dir2);
-                legal = legalMove(board, myPos, diagonal, true);
+                legal = legalMove(board, myPos, diagonal, true, myColor);
                 if (legal) {
                     legalMoves.add(new ChessMove(myPos, diagonal, null));
                 }
