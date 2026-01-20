@@ -75,7 +75,14 @@ public class PieceMoveCalculator {
                 return incomingPiece.getTeamColor() != myColor; //it's a legal move to capture the enemy color
             } else {return false;} //mostly for a pawn because they can't capture by going forward
         } else {return true;} //can move there if the space is empty
+    }
 
+    public static boolean continueOn(ChessBoard board, ChessPosition newPos){
+        int row = newPos.getRow();
+        int col = newPos.getColumn();
+
+        if(row > 8 || row < 1 || col > 8 || col < 1){return false;}
+        return board.getPiece(newPos) == null;
     }
     /*
     right now my problem is that if it captures a piece, it doesn't know to end.

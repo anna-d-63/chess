@@ -15,14 +15,16 @@ public class BishopMoveCalculator extends PieceMoveCalculator{    @Override
         ChessGame.TeamColor myColor = board.getPiece(myPosition).getTeamColor();
 
         boolean legal;
+        boolean canContinue;
         ChessPosition myPos;
 
         for(int i = 0; i < 4; i++) {
-            legal = true;
+            canContinue = true;
             myPos = myPosition;
-            while (legal) {
+            while (canContinue) {
                 ChessPosition newPos = moveOneSquare(myPos, directions[i], directions[i+1]);
                 legal = legalMove(board, myPos, newPos, true, myColor);
+                canContinue = continueOn(board, newPos);
                 if (legal) {
                     legalMoves.add(new ChessMove(myPosition, newPos, null));
                     myPos = newPos;
