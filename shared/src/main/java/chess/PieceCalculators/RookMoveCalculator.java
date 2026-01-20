@@ -23,7 +23,7 @@ public class RookMoveCalculator extends PieceMoveCalculator{
             myPos = myPosition;
             while (canContinue) {
                 ChessPosition newPos = moveOneSquare(myPos, dir, null);
-                legal = legalMove(board, myPos, newPos, true, myColor);
+                legal = legalMove(board, newPos, true, myColor);
                 canContinue = continueOn(board, newPos);
                 if (legal) {
                     legalMoves.add(new ChessMove(myPosition, newPos, null));

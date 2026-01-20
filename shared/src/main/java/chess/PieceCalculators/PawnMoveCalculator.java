@@ -23,7 +23,7 @@ public class PawnMoveCalculator extends PieceMoveCalculator{
         }
 
         ChessPosition oneSquare = moveOneSquare(myPos, dir, null);
-        legal = legalMove(board, myPos, oneSquare, false, myColor);
+        legal = legalMove(board, oneSquare, false, myColor);
         if(legal){
             //TODO: FIGURE OUT PROMOTION PIECE LOGIC
             legalMoves.add(new ChessMove(myPos, oneSquare, null));

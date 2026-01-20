@@ -19,14 +19,14 @@ public class KingMoveCalculator extends PieceMoveCalculator{
 
         for(Direction dir : Direction.values()) {
             newPos = moveOneSquare(myPos, dir, null);
-            legal = legalMove(board, myPos, newPos, true, myColor);
+            legal = legalMove(board, newPos, true, myColor);
             if(legal){
                 legalMoves.add(new ChessMove(myPos, newPos, null));
             }
         }
         for(int i = 0; i < 4; i++) {
             newPos = moveOneSquare(myPos, directions[i], directions[i+1]);
-            legal = legalMove(board, myPos, newPos, true, myColor);
+            legal = legalMove(board, newPos, true, myColor);
             if(legal){
                 legalMoves.add(new ChessMove(myPos, newPos, null));
             }

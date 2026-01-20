@@ -63,7 +63,7 @@ public class PieceMoveCalculator {
         return new ChessPosition(row, col);
     }
 
-    public static boolean legalMove(ChessBoard board, ChessPosition myPos, ChessPosition newPos, boolean canCapture, ChessGame.TeamColor myColor){
+    public static boolean legalMove(ChessBoard board, ChessPosition newPos, boolean canCapture, ChessGame.TeamColor myColor){
         int row = newPos.getRow();
         int col = newPos.getColumn();
 
@@ -184,6 +184,8 @@ public class PieceMoveCalculator {
         if (piece.getPieceType() == ChessPiece.PieceType.BISHOP) {return new BishopMoveCalculator().pieceMoves(board, myPosition);}
         else if (piece.getPieceType() == ChessPiece.PieceType.ROOK) {return new RookMoveCalculator().pieceMoves(board, myPosition);}
         else if (piece.getPieceType() == ChessPiece.PieceType.QUEEN) {return new QueenMoveCalculator().pieceMoves(board, myPosition);}
+        else if (piece.getPieceType() == ChessPiece.PieceType.KING) {return new KingMoveCalculator().pieceMoves(board, myPosition);}
+        else if (piece.getPieceType() == ChessPiece.PieceType.KNIGHT) {return new KnightMoveCalculator().pieceMoves(board, myPosition);}
         else{return List.of();}
     }
 }

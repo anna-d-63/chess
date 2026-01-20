@@ -23,7 +23,7 @@ public class BishopMoveCalculator extends PieceMoveCalculator{    @Override
             myPos = myPosition;
             while (canContinue) {
                 ChessPosition newPos = moveOneSquare(myPos, directions[i], directions[i+1]);
-                legal = legalMove(board, myPos, newPos, true, myColor);
+                legal = legalMove(board, newPos, true, myColor);
                 canContinue = continueOn(board, newPos);
                 if (legal) {
                     legalMoves.add(new ChessMove(myPosition, newPos, null));
