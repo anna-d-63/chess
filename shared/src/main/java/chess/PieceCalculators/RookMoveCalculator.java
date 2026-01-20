@@ -15,16 +15,18 @@ public class RookMoveCalculator extends PieceMoveCalculator{
         ChessGame.TeamColor myColor = board.getPiece(myPosition).getTeamColor();
 
         boolean legal;
+        boolean canContinue;
         ChessPosition myPos;
 
         for(Direction dir : Direction.values()) {
-            legal = true;
+            canContinue = true;
             myPos = myPosition;
-            while (legal) {
+            while (canContinue) {
                 ChessPosition newPos = moveOneSquare(myPos, dir, null);
                 legal = legalMove(board, myPos, newPos, true, myColor);
+                canContinue = continueOn(board, newPos);
                 if (legal) {
-                    legalMoves.add(new ChessMove(myPos, newPos, null));
+                    legalMoves.add(new ChessMove(myPosition, newPos, null));
                     myPos = newPos;
                 } else {
                     break;

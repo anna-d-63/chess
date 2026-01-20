@@ -181,11 +181,8 @@ public class PieceMoveCalculator {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
-        if (piece.getPieceType() == ChessPiece.PieceType.BISHOP) {
-            return new BishopMoveCalculator().pieceMoves(board, myPosition);
-        }
-        else{
-            return List.of();
-        }
+        if (piece.getPieceType() == ChessPiece.PieceType.BISHOP) {return new BishopMoveCalculator().pieceMoves(board, myPosition);}
+        else if (piece.getPieceType() == ChessPiece.PieceType.ROOK) {return new RookMoveCalculator().pieceMoves(board, myPosition);}
+        else{return List.of();}
     }
 }
