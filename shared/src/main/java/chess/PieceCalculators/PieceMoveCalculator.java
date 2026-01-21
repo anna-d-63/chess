@@ -15,7 +15,7 @@ public class PieceMoveCalculator {
         WEST
     }
 
-    public static ChessPosition moveOneSquare(ChessPosition myPosition, Direction dir1, Direction dir2){
+    public ChessPosition moveOneSquare(ChessPosition myPosition, Direction dir1, Direction dir2){
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
 
@@ -27,7 +27,7 @@ public class PieceMoveCalculator {
         return new ChessPosition(row, col);
     }
 
-    public static boolean legalMove(ChessBoard board, ChessPosition newPos, boolean canCapture, ChessGame.TeamColor myColor){
+    public boolean legalMove(ChessBoard board, ChessPosition newPos, boolean canCapture, ChessGame.TeamColor myColor){
         int row = newPos.getRow();
         int col = newPos.getColumn();
 
@@ -41,7 +41,7 @@ public class PieceMoveCalculator {
         } else {return true;} //can move there if the space is empty
     }
 
-    public static boolean continueOn(ChessBoard board, ChessPosition newPos){
+    public boolean continueOn(ChessBoard board, ChessPosition newPos){
         int row = newPos.getRow();
         int col = newPos.getColumn();
 
