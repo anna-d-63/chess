@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class KnightMoveCalculator extends PieceMoveCalculator{
+    @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPos) {
         Collection<ChessMove> legalMoves = new ArrayList<>();
         ChessGame.TeamColor myColor = board.getPiece(myPos).getTeamColor();

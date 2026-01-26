@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class KingMoveCalculator extends PieceMoveCalculator{
+    @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPos) {
         Collection<ChessMove> legalMoves = new ArrayList<>();
         Direction[] directions = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTH};

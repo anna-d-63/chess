@@ -1,8 +1,9 @@
 package chess;
 
-import chess.PieceCalculators.PieceMoveCalculator;
+import chess.PieceCalculators.*;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -55,7 +56,13 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return new PieceMoveCalculator().pieceMoves(board, myPosition);
+        if      (type == ChessPiece.PieceType.BISHOP)   {return new BishopMoveCalculator().pieceMoves(board, myPosition);}
+        else if (type == ChessPiece.PieceType.ROOK)     {return new RookMoveCalculator().pieceMoves(board, myPosition);}
+        else if (type == ChessPiece.PieceType.QUEEN)    {return new QueenMoveCalculator().pieceMoves(board, myPosition);}
+        else if (type == ChessPiece.PieceType.KING)     {return new KingMoveCalculator().pieceMoves(board, myPosition);}
+        else if (type == ChessPiece.PieceType.KNIGHT)   {return new KnightMoveCalculator().pieceMoves(board, myPosition);}
+        else if (type == ChessPiece.PieceType.PAWN)     {return new PawnMoveCalculator().pieceMoves(board, myPosition);}
+        else {return List.of();}
     }
 
     @Override

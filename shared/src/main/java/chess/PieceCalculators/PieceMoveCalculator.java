@@ -3,9 +3,8 @@ package chess.PieceCalculators;
 import chess.*;
 
 import java.util.Collection;
-import java.util.List;
 
-public class PieceMoveCalculator {
+public abstract class PieceMoveCalculator {
     public PieceMoveCalculator(){}
 
     public enum Direction {
@@ -49,14 +48,5 @@ public class PieceMoveCalculator {
         return board.getPiece(newPos) == null;
     }
 
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        ChessPiece piece = board.getPiece(myPosition);
-        if      (piece.getPieceType() == ChessPiece.PieceType.BISHOP)   {return new BishopMoveCalculator().pieceMoves(board, myPosition);}
-        else if (piece.getPieceType() == ChessPiece.PieceType.ROOK)     {return new RookMoveCalculator().pieceMoves(board, myPosition);}
-        else if (piece.getPieceType() == ChessPiece.PieceType.QUEEN)    {return new QueenMoveCalculator().pieceMoves(board, myPosition);}
-        else if (piece.getPieceType() == ChessPiece.PieceType.KING)     {return new KingMoveCalculator().pieceMoves(board, myPosition);}
-        else if (piece.getPieceType() == ChessPiece.PieceType.KNIGHT)   {return new KnightMoveCalculator().pieceMoves(board, myPosition);}
-        else if (piece.getPieceType() == ChessPiece.PieceType.PAWN)     {return new PawnMoveCalculator().pieceMoves(board, myPosition);}
-        else {return List.of();}
-    }
+    public abstract Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition);
 }

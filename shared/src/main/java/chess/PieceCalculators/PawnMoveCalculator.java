@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class PawnMoveCalculator extends PieceMoveCalculator{
+    @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPos) {
         Collection<ChessMove> legalMoves = new ArrayList<>();
 

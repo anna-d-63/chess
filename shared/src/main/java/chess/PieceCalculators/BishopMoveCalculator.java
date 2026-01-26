@@ -8,7 +8,8 @@ import chess.ChessPosition;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class BishopMoveCalculator extends PieceMoveCalculator{    @Override
+public class BishopMoveCalculator extends PieceMoveCalculator{
+    @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> legalMoves = new ArrayList<>();
         Direction[] directions = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTH};
