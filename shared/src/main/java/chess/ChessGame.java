@@ -12,18 +12,18 @@ import java.util.Objects;
 public class ChessGame {
 
     private ChessBoard board = new ChessBoard();
-    private TeamColor TeamTurn;
+    private TeamColor teamTurn;
 
     public ChessGame() {
         this.board.resetBoard();
-        this.TeamTurn = TeamColor.WHITE;
+        this.teamTurn = TeamColor.WHITE;
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        return TeamTurn;
+        return teamTurn;
     }
 
     /**
@@ -32,7 +32,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        this.TeamTurn = team;
+        this.teamTurn = team;
     }
 
     /**
@@ -71,6 +71,12 @@ public class ChessGame {
             board.addPiece(endPos, piece);
         } else {
             board.addPiece(endPos, new ChessPiece(piece.getTeamColor(), promoPiece));
+        }
+
+        if(this.teamTurn == TeamColor.WHITE){
+            setTeamTurn(TeamColor.BLACK);
+        } else {
+            setTeamTurn(TeamColor.WHITE);
         }
     }
 
@@ -129,11 +135,11 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return Objects.equals(board, chessGame.board) && TeamTurn == chessGame.TeamTurn;
+        return Objects.equals(board, chessGame.board) && teamTurn == chessGame.teamTurn;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(board, TeamTurn);
+        return Objects.hash(board, teamTurn);
     }
 }
