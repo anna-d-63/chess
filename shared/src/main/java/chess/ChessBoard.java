@@ -51,11 +51,9 @@ public class ChessBoard {
         // white first row
         for(int j = 0; j < 8; j++){
             squares[0][j] = new ChessPiece(colors[0], pieces[j]);
-        }
-
-        //white second row
-        for(int j = 0; j < 8; j++) {
             squares[1][j] = new ChessPiece(colors[0], pieces[8]);
+            squares[6][j] = new ChessPiece(colors[1], pieces[8]);
+            squares[7][j] = new ChessPiece(colors[1], pieces[j]);
         }
 
         //empty middle
@@ -63,16 +61,6 @@ public class ChessBoard {
             for(int j = 0; j < 8; j++){
                 squares[i][j] = null;
             }
-        }
-
-        //black second row
-        for(int j = 0; j < 8; j++){
-            squares[6][j] = new ChessPiece(colors[1], pieces[8]);
-        }
-
-        // black first row
-        for(int j = 0; j < 8; j++){
-            squares[7][j] = new ChessPiece(colors[1], pieces[j]);
         }
     }
 

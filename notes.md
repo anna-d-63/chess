@@ -101,37 +101,64 @@ then subclass for each piece \
      */
 
 
-//private static final Map<Character, ChessPiece.PieceType> CHAR_TO_TYPE_MAP = Map.of(
-//            'p', ChessPiece.PieceType.PAWN,
-//            'n', ChessPiece.PieceType.KNIGHT,
-//            'r', ChessPiece.PieceType.ROOK,
-//            'q', ChessPiece.PieceType.QUEEN,
-//            'k', ChessPiece.PieceType.KING,
-//            'b', ChessPiece.PieceType.BISHOP);
-//
-//    public static ChessBoard loadBoard(String boardText) {
-//        var board = new ChessBoard();
-//        int row = 8;
-//        int column = 1;
-//        for (var c : boardText.toCharArray()) {
-//            switch (c) {
-//                case '\n' -> {
-//                    column = 1;
-//                    row--;
-//                }
-//                case ' ' -> column++;
-//                case '|' -> {
-//                }
-//                default -> {
-//                    ChessGame.TeamColor color = Character.isLowerCase(c) ? ChessGame.TeamColor.BLACK
-//                            : ChessGame.TeamColor.WHITE;
-//                    var type = CHAR_TO_TYPE_MAP.get(Character.toLowerCase(c));
-//                    var position = new ChessPosition(row, column);
-//                    var piece = new ChessPiece(color, type);
-//                    board.addPiece(position, piece);
-//                    column++;
-//                }
-//            }
-//        }
-//        return board;
-//    }
+private static final Map<Character, ChessPiece.PieceType> CHAR_TO_TYPE_MAP = Map.of(
+'p', ChessPiece.PieceType.PAWN,
+'n', ChessPiece.PieceType.KNIGHT,
+'r', ChessPiece.PieceType.ROOK,
+'q', ChessPiece.PieceType.QUEEN,
+'k', ChessPiece.PieceType.KING,
+'b', ChessPiece.PieceType.BISHOP);
+
+    public static ChessBoard loadBoard(String boardText) {
+        var board = new ChessBoard();
+        int row = 8;
+        int column = 1;
+        for (var c : boardText.toCharArray()) {
+            switch (c) {
+                case '\n' -> {
+                    column = 1;
+                    row--;
+                }
+                case ' ' -> column++;
+                case '|' -> {
+                }
+                default -> {
+                    ChessGame.TeamColor color = Character.isLowerCase(c) ? ChessGame.TeamColor.BLACK
+                            : ChessGame.TeamColor.WHITE;
+                    var type = CHAR_TO_TYPE_MAP.get(Character.toLowerCase(c));
+                    var position = new ChessPosition(row, column);
+                    var piece = new ChessPiece(color, type);
+                    board.addPiece(position, piece);
+                    column++;
+                }
+            }
+        }
+        return board;
+    }
+
+
+
+
+Phase 1
+
+Chess game
+
+pare list of valid moves down to what you can actually do.\
+If it's not your turn, no valid moves\
+Need to be able to identify when you're in check, and pare down the list of valid moves to what you can do to get you out of check\
+checkmate is the given team has no way to protect their king from being captured\
+stalemate is if the given team has no legal moves but their king is not in immediate danger
+
+
+how do you know if you're in check?\
+You have to look at all of your opponent's moves, if any of those end positions are where your king is then you're in check.\
+you will have to iterate throughout the whole board.\
+valid moves are moves that don't put you in check, or if you are in check only moves that get you out of check
+
+valid moves is piece moves, start there. check each move to see if you do it, will you be in check.
+
+or make the move. basically just try the move and see if it leaves you in check.
+
+
+
+make a copy of the board, run all the simulations on that
