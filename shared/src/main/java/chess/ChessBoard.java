@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -11,9 +12,9 @@ import java.util.Objects;
  * <p>
  * stores all uncaptured pieces in a game
  */
-public class ChessBoard {
+public class ChessBoard implements Cloneable{
 
-    private final ChessPiece[][] squares = new ChessPiece[8][8];
+    private ChessPiece[][] squares = new ChessPiece[8][8];
 
     public ChessBoard() {
     }
@@ -64,6 +65,22 @@ public class ChessBoard {
         }
     }
 
+    @Override
+    protected ChessBoard clone(){
+        try {
+            ChessBoard clone = (ChessBoard) super.clone();
+
+            clone.squares = Arrays.copyOf(squares, squares.length);
+            for(int i = 0; i <8; i++){
+                clone.squares[i] = Arrays.copyOf(squares[i], squares[i].length);
+            }
+
+            return clone;
+        } catch (CloneNotSupportedException e){
+            throw new RuntimeException(e);
+        }
+
+    }
 
     @Override
     public String toString() {
@@ -96,5 +113,40 @@ public class ChessBoard {
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(squares);
+    }
+
+    private static final Map<Character, ChessPiece.PieceType> CHAR_TO_TYPE_MAP = Map.of(
+            'p', ChessPiece.PieceType.PAWN,
+            'n', ChessPiece.PieceType.KNIGHT,
+            'r', ChessPiece.PieceType.ROOK,
+            'q', ChessPiece.PieceType.QUEEN,
+            'k', ChessPiece.PieceType.KING,
+            'b', ChessPiece.PieceType.BISHOP);
+
+    public static ChessBoard loadBoard(String boardText) {
+        var board = new ChessBoard();
+        int row = 8;
+        int column = 1;
+        for (var c : boardText.toCharArray()) {
+            switch (c) {
+                case '\n' -> {
+                    column = 1;
+                    row--;
+                }
+                case ' ' -> column++;
+                case '|' -> {
+                }
+                default -> {
+                    ChessGame.TeamColor color = Character.isLowerCase(c) ? ChessGame.TeamColor.BLACK
+                            : ChessGame.TeamColor.WHITE;
+                    var type = CHAR_TO_TYPE_MAP.get(Character.toLowerCase(c));
+                    var position = new ChessPosition(row, column);
+                    var piece = new ChessPiece(color, type);
+                    board.addPiece(position, piece);
+                    column++;
+                }
+            }
+        }
+        return board;
     }
 }

@@ -53,7 +53,18 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece piece = board.getPiece(startPosition);
+
+        if (piece == null || piece.getTeamColor() != teamTurn){return null;}
+
+        Collection<ChessMove> pieceMoves = piece.pieceMoves(board, startPosition);
+
+        for(ChessMove pieceMove : pieceMoves){
+            var boardCopy = (ChessBoard) board.clone();
+        }
+
+
+        return List.of();
     }
 
     /**
@@ -180,4 +191,5 @@ public class ChessGame {
     public int hashCode() {
         return Objects.hash(board, teamTurn);
     }
+
 }
