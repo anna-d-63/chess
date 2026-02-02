@@ -89,11 +89,9 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        ChessPosition kingPos;
+        ChessPosition kingPos = null;
         ChessPiece tempPiece;
-        Collection<ChessMove> kingMoves = List.of();
         Collection<Collection<ChessMove>> enemyMoves = new ArrayList<>();
-
 
         /*
         cycle through board
@@ -108,7 +106,6 @@ public class ChessGame {
                     tempPiece.getPieceType() == ChessPiece.PieceType.KING &&
                     tempPiece.getTeamColor() == teamColor){
                         kingPos = tempPos;
-                        kingMoves = tempPiece.pieceMoves(board, kingPos);
                 }
                 if(tempPiece != null &&
                     tempPiece.getTeamColor() != teamColor){
@@ -118,9 +115,17 @@ public class ChessGame {
             }
         }
 
+        ChessPosition intendedPos;
+        for(Collection<ChessMove> movesList : enemyMoves){
+            for(ChessMove move : movesList){
+                intendedPos = move.getEndPosition();
+                if(intendedPos.equals(kingPos)){
+                    return true;
+                }
+            }
+        }
 
-
-        return true;
+        return false;
     }
 
     /**
