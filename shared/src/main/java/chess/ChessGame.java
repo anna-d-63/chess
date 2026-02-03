@@ -55,16 +55,20 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = board.getPiece(startPosition);
 
-        if (piece == null || piece.getTeamColor() != teamTurn){return null;}
+        if (piece == null){return List.of();}
 
         Collection<ChessMove> pieceMoves = piece.pieceMoves(board, startPosition);
+        Collection<ChessMove> validMoves = new ArrayList<>();
 
         for(ChessMove pieceMove : pieceMoves){
-            var boardCopy = (ChessBoard) board.clone();
+            ChessBoard boardCopy = board.clone();
+            makeMoveHelper(pieceMove, boardCopy);
+            if(!isInCheckHelper(piece.getTeamColor(), boardCopy)){
+                validMoves.add(pieceMove);
+            }
         }
 
-
-        return List.of();
+        return validMoves;
     }
 
     /**
@@ -74,6 +78,16 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        makeMoveHelper(move, this.board);
+
+        if(this.teamTurn == TeamColor.WHITE){
+            setTeamTurn(TeamColor.BLACK);
+        } else {
+            setTeamTurn(TeamColor.WHITE);
+        }
+    }
+
+    public void makeMoveHelper(ChessMove move, ChessBoard board){
         ChessPosition prevPos = move.getStartPosition();
         ChessPosition endPos = move.getEndPosition();
         ChessPiece.PieceType promoPiece = move.getPromotionPiece();
@@ -85,12 +99,6 @@ public class ChessGame {
         } else {
             board.addPiece(endPos, new ChessPiece(piece.getTeamColor(), promoPiece));
         }
-
-        if(this.teamTurn == TeamColor.WHITE){
-            setTeamTurn(TeamColor.BLACK);
-        } else {
-            setTeamTurn(TeamColor.WHITE);
-        }
     }
 
     /**
@@ -100,6 +108,11 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+        return isInCheckHelper(teamColor, this.board);
+    }
+
+
+    public boolean isInCheckHelper(TeamColor teamColor, ChessBoard board){
         ChessPosition kingPos = null;
         ChessPiece tempPiece;
         Collection<Collection<ChessMove>> enemyMoves = new ArrayList<>();
@@ -114,12 +127,12 @@ public class ChessGame {
                 ChessPosition tempPos = new ChessPosition(row, col);
                 tempPiece = board.getPiece(tempPos);
                 if(tempPiece != null &&
-                    tempPiece.getPieceType() == ChessPiece.PieceType.KING &&
-                    tempPiece.getTeamColor() == teamColor){
-                        kingPos = tempPos;
+                        tempPiece.getPieceType() == ChessPiece.PieceType.KING &&
+                        tempPiece.getTeamColor() == teamColor){
+                    kingPos = tempPos;
                 }
                 if(tempPiece != null &&
-                    tempPiece.getTeamColor() != teamColor){
+                        tempPiece.getTeamColor() != teamColor){
                     Collection<ChessMove> pieceMoves = tempPiece.pieceMoves(board, tempPos);
                     enemyMoves.add(pieceMoves);
                 }
