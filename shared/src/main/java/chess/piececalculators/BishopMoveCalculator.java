@@ -1,4 +1,4 @@
-package chess.PieceCalculators;
+package chess.piececalculators;
 
 import chess.ChessBoard;
 import chess.ChessGame;
@@ -8,7 +8,7 @@ import chess.ChessPosition;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class QueenMoveCalculator extends PieceMoveCalculator{
+public class BishopMoveCalculator extends PieceMoveCalculator{
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> legalMoves = new ArrayList<>();
@@ -24,21 +24,6 @@ public class QueenMoveCalculator extends PieceMoveCalculator{
             myPos = myPosition;
             while (canContinue) {
                 ChessPosition newPos = moveOneSquare(myPos, directions[i], directions[i+1]);
-                legal = legalMove(board, newPos, true, myColor);
-                canContinue = continueOn(board, newPos);
-                if (legal) {
-                    legalMoves.add(new ChessMove(myPosition, newPos, null));
-                    myPos = newPos;
-                } else {
-                    break;
-                }
-            }
-        }
-        for(Direction dir : Direction.values()) {
-            canContinue = true;
-            myPos = myPosition;
-            while (canContinue) {
-                ChessPosition newPos = moveOneSquare(myPos, dir, null);
                 legal = legalMove(board, newPos, true, myColor);
                 canContinue = continueOn(board, newPos);
                 if (legal) {
