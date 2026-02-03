@@ -78,13 +78,27 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        makeMoveHelper(move, this.board);
-
-        if(this.teamTurn == TeamColor.WHITE){
-            setTeamTurn(TeamColor.BLACK);
-        } else {
-            setTeamTurn(TeamColor.WHITE);
+        ChessPiece piece = board.getPiece(move.getStartPosition());
+        if(piece == null){
+            throw new InvalidMoveException("Must move a piece");
         }
+        TeamColor pieceColor = piece.getTeamColor();
+        if(pieceColor != getTeamTurn()){
+            throw new InvalidMoveException("Can't make a move when it's not your turn");
+        }
+        Collection<ChessMove> valid = validMoves(move.getStartPosition());
+        if(valid.contains(move)){
+            makeMoveHelper(move, this.board);
+
+            if(this.teamTurn == TeamColor.WHITE){
+                setTeamTurn(TeamColor.BLACK);
+            } else {
+                setTeamTurn(TeamColor.WHITE);
+            }
+        } else {
+            throw new InvalidMoveException("Move is not valid");
+        }
+
     }
 
     public void makeMoveHelper(ChessMove move, ChessBoard board){
