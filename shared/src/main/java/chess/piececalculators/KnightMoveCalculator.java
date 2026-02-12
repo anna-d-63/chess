@@ -17,13 +17,21 @@ public class KnightMoveCalculator extends PieceMoveCalculator{
         Direction[] dirSideways = {Direction.EAST, Direction.WEST};
         Direction[] dirUpDown = {Direction.NORTH, Direction.SOUTH};
 
+        moveThatKnight(board, myPos, legalMoves, dirSideways, dirUpDown, myColor);
+        moveThatKnight(board, myPos, legalMoves, dirUpDown, dirSideways, myColor);
+
+        return legalMoves;
+    }
+
+    public void moveThatKnight(ChessBoard board, ChessPosition myPos, Collection<ChessMove> legalMoves,
+                               Direction[] firstDirs, Direction[] secondDirs, ChessGame.TeamColor myColor){
         ChessPosition forward;
         ChessPosition diagonal;
         boolean legal;
 
-        for(Direction dir : dirUpDown){
+        for(Direction dir : firstDirs){
             forward = moveOneSquare(myPos, dir, null);
-            for(Direction dir2 : dirSideways) {
+            for(Direction dir2 : secondDirs) {
                 diagonal = moveOneSquare(forward, dir, dir2);
                 legal = legalMove(board, diagonal, true, myColor);
                 if (legal) {
@@ -31,16 +39,5 @@ public class KnightMoveCalculator extends PieceMoveCalculator{
                 }
             }
         }
-        for(Direction dir : dirSideways){
-            forward = moveOneSquare(myPos, dir, null);
-            for(Direction dir2 : dirUpDown) {
-                diagonal = moveOneSquare(forward, dir, dir2);
-                legal = legalMove(board, diagonal, true, myColor);
-                if (legal) {
-                    legalMoves.add(new ChessMove(myPos, diagonal, null));
-                }
-            }
-        }
-        return legalMoves;
     }
 }
