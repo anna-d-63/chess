@@ -37,7 +37,6 @@ public class PawnMoveCalculator extends PieceMoveCalculator{
                 legalMoves.add(new ChessMove(myPos, oneSquare, null));
             }
 
-//                                                                                          //if you are on your color's starting row and its already legal to move one
             if(myPos.getRow() == 7 && myColor == ChessGame.TeamColor.BLACK ||
                 myPos.getRow() == 2 && myColor == ChessGame.TeamColor.WHITE) {              //check if it is legal to move 2
                 ChessPosition secondSquare = moveOneSquare(oneSquare, dir, null);

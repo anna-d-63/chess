@@ -2,6 +2,7 @@ package chess.piececalculators;
 
 import chess.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public abstract class PieceMoveCalculator {
@@ -13,6 +14,8 @@ public abstract class PieceMoveCalculator {
         SOUTH,
         WEST
     }
+
+    Direction[] dirs = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTH};
 
     public ChessPosition moveOneSquare(ChessPosition myPosition, Direction dir1, Direction dir2){
         int row = myPosition.getRow();
@@ -46,6 +49,38 @@ public abstract class PieceMoveCalculator {
 
         if(row > 8 || row < 1 || col > 8 || col < 1){return false;}
         return board.getPiece(newPos) == null;
+    }
+
+    public Collection<ChessMove> inOneDir(ChessBoard board, ChessPosition myPosition, boolean diagonal){
+        Collection<ChessMove> legalMoves = new ArrayList<>();
+        ChessGame.TeamColor myColor = board.getPiece(myPosition).getTeamColor();
+
+        boolean legal;
+        boolean canContinue;
+        ChessPosition myPos;
+        ChessPosition newPos;
+
+        for(int i = 0; i < 4; i++) {
+            canContinue = true;
+            myPos = myPosition;
+            while (canContinue) {
+                if (diagonal) {
+                    newPos = moveOneSquare(myPos, dirs[i], dirs[i + 1]);
+                } else {
+                    newPos = moveOneSquare(myPos, dirs[i], null);
+                }
+                legal = legalMove(board, newPos, true, myColor);
+                canContinue = continueOn(board, newPos);
+                if (legal) {
+                    legalMoves.add(new ChessMove(myPosition, newPos, null));
+                    myPos = newPos;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        return legalMoves;
     }
 
     public abstract Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition);
