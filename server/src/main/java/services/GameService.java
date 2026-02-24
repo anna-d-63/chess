@@ -1,5 +1,7 @@
 package services;
 
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
 import model.AuthData;
 import model.GameData;
 import server.requestAndResult.*;
@@ -7,24 +9,33 @@ import server.requestAndResult.*;
 import java.util.Collection;
 
 public class GameService {
+
+    private final AuthDAO authDAO;
+    private final GameDAO gameDAO;
+
+    public GameService(AuthDAO authDAO, GameDAO gameDAO) {
+        this.authDAO = authDAO;
+        this.gameDAO = gameDAO;
+    }
+
     public ListGamesResult listGames(ListGamesRequest request){
         AuthData authData = authorizeUser(request.authToken());
-        Collection<GameData> games = db.listGames();
+        Collection<GameData> games = gameDAO.listGames();
         return new ListGamesResult(games);
     }
 
     public CreateGameResult createGame(CreateGameRequest request){
         AuthData authData = authorizeUser(request.authToken());
-        GameData gameData = db.createGame(request.gameName());
+        GameData gameData = gameDAO.createGame(request.gameName());
         return new CreateGameResult(gameData.gameID());
     }
 
     public void joinGame(JoinGameRequest request){
         AuthData authData = authorizeUser(request.authToken());
-        GameData game = db.getGame(request.gameID());
+        GameData game = gameDAO.getGame(request.gameID());
         if (game == null){
             //400 bad request
-            System.out.println("Bad Request")
+            System.out.println("Bad Request");
         }
         if (request.playerColor() == "WHITE"){
             String wUsername = game.whiteUsername();
@@ -32,19 +43,19 @@ public class GameService {
                 //403 Already Taken Exception
                 System.out.println("Already Taken");
             }
-            db.updateGame("WHITE", authData.username(), game.gameID());
+            gameDAO.updateGame("WHITE", authData.username(), game.gameID());
         } else {
             String bUsername = game.blackUsername();
             if (bUsername != null){
                 //403 Already Taken Exception
                 System.out.println("Already Taken");
             }
-            db.updateGame("BLACK", authData.username(), game.gameID());
+            gameDAO.updateGame("BLACK", authData.username(), game.gameID());
         }
     }
 
     public AuthData authorizeUser(String authToken){
-        AuthData authData = db.getAuth(authToken);
+        AuthData authData = authDAO.getAuth(authToken);
         if (authData == null){
             //401 unauthorized exception
             System.out.println("Unauthorized");

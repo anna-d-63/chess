@@ -11,39 +11,46 @@ import server.requestAndResult.*;
 import java.util.UUID;
 
 public class UserService {
+    private final UserDAO userDAO;
+    private final AuthDAO authDAO;
+
+    public UserService(UserDAO userDAO, AuthDAO authDAO) {
+        this.userDAO = userDAO;
+        this.authDAO = authDAO;
+    }
 
     public RegisterResult register(RegisterRequest request) {
         String username = request.username();
-        UserData userData  = db.getUser(username);
+        UserData userData  = userDAO.getUser(username);
         if (userData != null){
             //403 already taken exception
             System.out.println("Already Taken");
         }
-        db.createUser(username, request.password(), request.email());
+        userDAO.createUser(username, request.password(), request.email());
         String authToken = createAuthToken();
-        db.createAuth(username, authToken);
+        authDAO.createAuth(username, authToken);
         return new RegisterResult(username, authToken);
     }
 
     public LoginResult login(LoginRequest request){
         String username = request.username();
-        UserData userData  = db.getUser(username);
+        UserData userData  = userDAO.getUser(username);
         if (userData == null){
             //401 unauthorized exception
             System.out.println("Unauthorized");
         }
         String authToken = createAuthToken();
-        db.createAuth(username, authToken);
+        authDAO.createAuth(username, authToken);
         return new LoginResult(username, authToken);
     }
 
     public void logout(LogoutRequest request){
-        AuthData authData = db.getAuth(request.authToken());
+        AuthData authData = authDAO.getAuth(request.authToken());
         if (authData == null){
             //401 unauthorized exception
             System.out.println("Unauthorized");
         }
-        db.deleteAuth(authData);
+        authDAO.deleteAuth(request.authToken());
     }
 
     public String createAuthToken(){

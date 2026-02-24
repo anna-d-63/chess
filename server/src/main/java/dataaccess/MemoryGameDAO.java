@@ -11,7 +11,7 @@ public class MemoryGameDAO implements GameDAO {
     final private HashMap<Integer, GameData> games = new HashMap<>();
 
     @Override
-    public GameData createGame(String gameName) throws DataAccessException {
+    public GameData createGame(String gameName) { // throws DataAccessException {
         Random random = new Random();
         int id = 1000 + random.nextInt(9000);
         while(games.containsKey(id)){
@@ -23,22 +23,27 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void deleteGame(int gameID) throws DataAccessException {
+    public void deleteGame(int gameID) { //throws DataAccessException {
         games.remove(gameID);
     }
 
     @Override
-    public void clearGames() throws DataAccessException {
+    public GameData getGame(int gameID) { //throws DataAccessException {
+        return games.get(gameID);
+    }
+
+    @Override
+    public void clearGames() { //throws DataAccessException {
         games.clear();
     }
 
     @Override
-    public Collection<GameData> listGames() throws DataAccessException {
+    public Collection<GameData> listGames() { //throws DataAccessException {
         return games.values();
     }
 
     @Override
-    public void updateGame(String playerColor, String username, int gameID) throws DataAccessException {
+    public void updateGame(String playerColor, String username, int gameID) { //throws DataAccessException {
         GameData oldGame = games.get(gameID);
         GameData updatedGame;
         if(playerColor == "WHITE"){
