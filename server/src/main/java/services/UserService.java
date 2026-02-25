@@ -4,6 +4,9 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
+import io.javalin.http.BadRequestResponse;
+import io.javalin.http.ForbiddenResponse;
+import io.javalin.http.UnauthorizedResponse;
 import model.AuthData;
 import model.UserData;
 import server.requestAndResult.*;
@@ -20,11 +23,15 @@ public class UserService {
     }
 
     public RegisterResult register(RegisterRequest request) {
+        if (request.username() == null ||
+            request.password() == null ||
+            request.email() == null) {
+            throw new BadRequestResponse("Error: bad request");
+        }
         String username = request.username();
         UserData userData  = userDAO.getUser(username);
-        if (userData != null){
-            //403 already taken exception
-            System.out.println("Already Taken");
+        if (userData != null) {
+            throw new ForbiddenResponse("Error: already taken");
         }
         userDAO.createUser(username, request.password(), request.email());
         String authToken = createAuthToken();
@@ -36,8 +43,7 @@ public class UserService {
         String username = request.username();
         UserData userData  = userDAO.getUser(username);
         if (userData == null){
-            //401 unauthorized exception
-            System.out.println("Unauthorized");
+            throw new BadRequestResponse();
         }
         String authToken = createAuthToken();
         authDAO.createAuth(username, authToken);
@@ -47,8 +53,7 @@ public class UserService {
     public void logout(LogoutRequest request){
         AuthData authData = authDAO.getAuth(request.authToken());
         if (authData == null){
-            //401 unauthorized exception
-            System.out.println("Unauthorized");
+            throw new UnauthorizedResponse();
         }
         authDAO.deleteAuth(request.authToken());
     }

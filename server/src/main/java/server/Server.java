@@ -7,6 +7,7 @@ import io.javalin.*;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import com.google.gson.Gson;
+import io.javalin.http.InternalServerErrorResponse;
 import server.requestAndResult.RegisterRequest;
 import server.requestAndResult.RegisterResult;
 import services.ClearService;
@@ -84,6 +85,12 @@ public class Server {
     }
 
     private void clearHandler(Context ctx) {
-
+        try {
+            clearService.clear();
+            ctx.status(200);
+        } catch (Exception e) {
+            ctx.status(500);
+            throw new InternalServerErrorResponse();
+        }
     }
 }
