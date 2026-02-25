@@ -1,8 +1,6 @@
 package services;
 
 import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.ForbiddenResponse;
@@ -23,15 +21,11 @@ public class UserService {
     }
 
     public RegisterResult register(RegisterRequest request) {
-        if (request.username() == null ||
-            request.password() == null ||
-            request.email() == null) {
-            throw new BadRequestResponse("Bad Request");
-        }
+        checkIfNull(request);
         String username = request.username();
         UserData userData  = userDAO.getUser(username);
         if (userData != null) {
-            throw new ForbiddenResponse("Already Taken");
+            throw new ForbiddenResponse("already Taken");
         }
         userDAO.createUser(username, request.password(), request.email());
         String authToken = createAuthToken();
@@ -40,25 +34,32 @@ public class UserService {
     }
 
     public LoginResult login(LoginRequest request){
+        checkIfNull(request);
         String username = request.username();
         UserData userData  = userDAO.getUser(username);
-        if (userData == null){
-            throw new BadRequestResponse("Bad Request");
-        }
+        checkIfAuthorized(userData);
         String authToken = createAuthToken();
         authDAO.createAuth(username, authToken);
         return new LoginResult(username, authToken);
     }
 
     public void logout(LogoutRequest request){
+        checkIfNull(request);
         AuthData authData = authDAO.getAuth(request.authToken());
-        if (authData == null){
-            throw new UnauthorizedResponse("Unauthorized");
-        }
+        checkIfAuthorized(authData);
         authDAO.deleteAuth(request.authToken());
     }
 
     public String createAuthToken(){
         return UUID.randomUUID().toString();
+    }
+
+    private void checkIfNull(ParentRequest request) {
+        if (request.hasNullFields()){throw new BadRequestResponse("bad request");}
+    }
+
+    private void checkIfAuthorized(Object data){
+        if (data == null) {
+            throw new UnauthorizedResponse("unauthorized");}
     }
 }

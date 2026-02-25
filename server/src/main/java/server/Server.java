@@ -8,10 +8,7 @@ import io.javalin.Javalin;
 import io.javalin.http.*;
 import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
-import server.requestAndResult.LoginRequest;
-import server.requestAndResult.LoginResult;
-import server.requestAndResult.RegisterRequest;
-import server.requestAndResult.RegisterResult;
+import server.requestAndResult.*;
 import services.ClearService;
 import services.GameService;
 import services.UserService;
@@ -25,11 +22,14 @@ public class Server {
     private final UserService userService;
     private final GameService gameService;
     private final ClearService clearService;
+    private static final MemoryUserDAO userDAO = new MemoryUserDAO();
+    private static final MemoryAuthDAO authDAO = new MemoryAuthDAO();
+    private static final MemoryGameDAO gameDAO = new MemoryGameDAO();
 
     public Server(){
-        this(new UserService(new MemoryUserDAO(), new MemoryAuthDAO()),
-                new GameService(new MemoryAuthDAO(), new MemoryGameDAO()),
-                new ClearService(new MemoryUserDAO(), new MemoryAuthDAO(), new MemoryGameDAO()));
+        this(new UserService(userDAO, authDAO),
+                new GameService(authDAO, gameDAO),
+                new ClearService(userDAO, authDAO, gameDAO));
     }
 
     public Server(UserService userService, GameService gameService, ClearService clearService) {
@@ -48,7 +48,7 @@ public class Server {
                 .exception(ForbiddenResponse.class, this::forbiddenHandler)
                 .exception(BadRequestResponse.class, this::badReqHandler)
                 .exception(UnauthorizedResponse.class, this::unauthorizedHandler);
-
+                //TODO: these work I think with curl but aren't passing the standard tests like I think they should
     }
 
     public int run(int desiredPort) {
@@ -60,32 +60,46 @@ public class Server {
         javalin.stop();
     }
 
+    //TODO: how do I store authorization header after registering or logging in?
+
     private void registerHandler(Context ctx) {
         RegisterRequest request = serializer.fromJson(ctx.body(), RegisterRequest.class);
         RegisterResult result = userService.register(request);
+        ctx.header("Authorization", result.authToken());
         ctx.result(serializer.toJson(result));
     }
 
     private void loginHandler(Context ctx) {
         LoginRequest request = serializer.fromJson(ctx.body(), LoginRequest.class);
         LoginResult result = userService.login(request);
+        ctx.header("Authorization", result.authToken());
         ctx.result(serializer.toJson(result));
     }
 
     private void logoutHandler(Context ctx) {
-
+        //TODO: some code to extract header and form request
+        LogoutRequest request = serializer.fromJson(ctx.body(), LogoutRequest.class);
+        userService.logout(request);
     }
 
     private void listGamesHandler(Context ctx) {
-
+        //TODO: some code to extract header and form request
+        ListGamesRequest request = serializer.fromJson(ctx.body(), ListGamesRequest.class);
+        ListGamesResult result = gameService.listGames(request);
+        ctx.result(serializer.toJson(result));
     }
 
     private void createGameHandler(Context ctx) {
-
+        //TODO: some code to extract header and form request
+        CreateGameRequest request = serializer.fromJson(ctx.body(), CreateGameRequest.class);
+        CreateGameResult result = gameService.createGame(request);
+        ctx.result(serializer.toJson(result));
     }
 
     private void joinGameHandler(Context ctx) {
-
+        //TODO: some code to extract header and form request
+        JoinGameRequest request = serializer.fromJson(ctx.body(), JoinGameRequest.class);
+        gameService.joinGame(request);
     }
 
     private void clearHandler(Context ctx) {
@@ -100,7 +114,7 @@ public class Server {
 
     private void unauthorizedHandler(UnauthorizedResponse e, @NotNull Context context) {
         var body = serializer.toJson(Map.of("Error", e.getMessage()));
-        context.status(400);
+        context.status(401);
         context.json(body);
     }
 
