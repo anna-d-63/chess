@@ -78,14 +78,14 @@ public class Server {
 
     //TODO: a server error is occurring for some reason
     private void logoutHandler(Context ctx) {
-        LogoutRequest request = serializer.fromJson(ctx.header("authorization"), LogoutRequest.class);
+        LogoutRequest request = new LogoutRequest(ctx.header("authorization"));
         userService.logout(request);
         ctx.result("");
         ctx.status(200);
     }
 
     private void listGamesHandler(Context ctx) {
-        ListGamesRequest request = serializer.fromJson(ctx.header("authorization"), ListGamesRequest.class);
+        ListGamesRequest request = new ListGamesRequest(ctx.header("authorization"));
         ListGamesResult result = gameService.listGames(request);
         ctx.result(serializer.toJson(result));
     }
