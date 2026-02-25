@@ -26,12 +26,12 @@ public class UserService {
         if (request.username() == null ||
             request.password() == null ||
             request.email() == null) {
-            throw new BadRequestResponse("Error: bad request");
+            throw new BadRequestResponse("Bad Request");
         }
         String username = request.username();
         UserData userData  = userDAO.getUser(username);
         if (userData != null) {
-            throw new ForbiddenResponse("Error: already taken");
+            throw new ForbiddenResponse("Already Taken");
         }
         userDAO.createUser(username, request.password(), request.email());
         String authToken = createAuthToken();
@@ -43,7 +43,7 @@ public class UserService {
         String username = request.username();
         UserData userData  = userDAO.getUser(username);
         if (userData == null){
-            throw new BadRequestResponse();
+            throw new BadRequestResponse("Bad Request");
         }
         String authToken = createAuthToken();
         authDAO.createAuth(username, authToken);
@@ -53,7 +53,7 @@ public class UserService {
     public void logout(LogoutRequest request){
         AuthData authData = authDAO.getAuth(request.authToken());
         if (authData == null){
-            throw new UnauthorizedResponse();
+            throw new UnauthorizedResponse("Unauthorized");
         }
         authDAO.deleteAuth(request.authToken());
     }

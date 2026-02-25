@@ -5,14 +5,18 @@ import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import io.javalin.*;
 import io.javalin.Javalin;
-import io.javalin.http.Context;
+import io.javalin.http.*;
 import com.google.gson.Gson;
-import io.javalin.http.InternalServerErrorResponse;
+import org.jetbrains.annotations.NotNull;
+import server.requestAndResult.LoginRequest;
+import server.requestAndResult.LoginResult;
 import server.requestAndResult.RegisterRequest;
 import server.requestAndResult.RegisterResult;
 import services.ClearService;
 import services.GameService;
 import services.UserService;
+
+import java.util.Map;
 
 public class Server {
     Gson serializer = new Gson();
@@ -40,10 +44,10 @@ public class Server {
                 .get("/game", this::listGamesHandler)
                 .post("/game", this::createGameHandler)
                 .put("/game", this::joinGameHandler)
-                .delete("/db", this::clearHandler);
-
-        // Register your endpoints and exception handlers here.
-        //TODO: exception handlers?
+                .delete("/db", this::clearHandler)
+                .exception(ForbiddenResponse.class, this::forbiddenHandler)
+                .exception(BadRequestResponse.class, this::badReqHandler)
+                .exception(UnauthorizedResponse.class, this::unauthorizedHandler);
 
     }
 
@@ -57,15 +61,15 @@ public class Server {
     }
 
     private void registerHandler(Context ctx) {
-        //is body going to be a json? or just a string? how do I make it the correct json object?
-        //how do I turn it into json to make into a request?
         RegisterRequest request = serializer.fromJson(ctx.body(), RegisterRequest.class);
         RegisterResult result = userService.register(request);
         ctx.result(serializer.toJson(result));
     }
 
     private void loginHandler(Context ctx) {
-
+        LoginRequest request = serializer.fromJson(ctx.body(), LoginRequest.class);
+        LoginResult result = userService.login(request);
+        ctx.result(serializer.toJson(result));
     }
 
     private void logoutHandler(Context ctx) {
@@ -92,5 +96,23 @@ public class Server {
             ctx.status(500);
             throw new InternalServerErrorResponse();
         }
+    }
+
+    private void unauthorizedHandler(UnauthorizedResponse e, @NotNull Context context) {
+        var body = serializer.toJson(Map.of("Error", e.getMessage()));
+        context.status(400);
+        context.json(body);
+    }
+
+    private void badReqHandler(BadRequestResponse e, @NotNull Context context) {
+        var body = serializer.toJson(Map.of("Error", e.getMessage()));
+        context.status(400);
+        context.json(body);
+    }
+
+    private void forbiddenHandler(ForbiddenResponse e, @NotNull Context context) {
+        var body = serializer.toJson(Map.of("Error", e.getMessage()));
+        context.status(403);
+        context.json(body);
     }
 }

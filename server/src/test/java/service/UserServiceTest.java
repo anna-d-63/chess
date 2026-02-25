@@ -11,11 +11,14 @@ import server.requestAndResult.RegisterResult;
 import services.UserService;
 
 public class UserServiceTest {
-    static UserService service = new UserService(new MemoryUserDAO(), new MemoryAuthDAO());
+    private final MemoryUserDAO userDAO = new MemoryUserDAO();
+    private final MemoryAuthDAO authDAO = new MemoryAuthDAO();
+    private UserService service = new UserService(userDAO, authDAO);
 
     @BeforeEach
     void clear() {
-        service = new UserService(new MemoryUserDAO(), new MemoryAuthDAO());
+        userDAO.clearUsers();
+        authDAO.clearAuth();
     }
 
     @Test
@@ -24,6 +27,7 @@ public class UserServiceTest {
         RegisterRequest request = new RegisterRequest(user.username(), user.password(), user.email());
         RegisterResult result = service.register(request);
 
-
+        System.out.println(request);
+        System.out.println(result);
     }
 }
