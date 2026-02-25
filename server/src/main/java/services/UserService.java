@@ -38,6 +38,9 @@ public class UserService {
         String username = request.username();
         UserData userData  = userDAO.getUser(username);
         checkIfAuthorized(userData);
+        if (!request.password().equals(userData.password())){
+            throw new UnauthorizedResponse("unauthorized");
+        }
         String authToken = createAuthToken();
         authDAO.createAuth(username, authToken);
         return new LoginResult(username, authToken);

@@ -1,5 +1,7 @@
 package server;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
@@ -48,7 +50,7 @@ public class Server {
                 .exception(ForbiddenResponse.class, this::forbiddenHandler)
                 .exception(BadRequestResponse.class, this::badReqHandler)
                 .exception(UnauthorizedResponse.class, this::unauthorizedHandler);
-                //TODO: these work I think with curl but aren't passing the standard tests like I think they should
+
     }
 
     public int run(int desiredPort) {
@@ -59,8 +61,6 @@ public class Server {
     public void stop() {
         javalin.stop();
     }
-
-    //TODO: how do I store authorization header after registering or logging in?
 
     private void registerHandler(Context ctx) {
         RegisterRequest request = serializer.fromJson(ctx.body(), RegisterRequest.class);
@@ -76,29 +76,35 @@ public class Server {
         ctx.result(serializer.toJson(result));
     }
 
+    //TODO: a server error is occurring for some reason
     private void logoutHandler(Context ctx) {
-        //TODO: some code to extract header and form request
-        LogoutRequest request = serializer.fromJson(ctx.body(), LogoutRequest.class);
+        LogoutRequest request = serializer.fromJson(ctx.header("authorization"), LogoutRequest.class);
         userService.logout(request);
+        ctx.result("");
+        ctx.status(200);
     }
 
     private void listGamesHandler(Context ctx) {
-        //TODO: some code to extract header and form request
-        ListGamesRequest request = serializer.fromJson(ctx.body(), ListGamesRequest.class);
+        ListGamesRequest request = serializer.fromJson(ctx.header("authorization"), ListGamesRequest.class);
         ListGamesResult result = gameService.listGames(request);
         ctx.result(serializer.toJson(result));
     }
 
     private void createGameHandler(Context ctx) {
-        //TODO: some code to extract header and form request
-        CreateGameRequest request = serializer.fromJson(ctx.body(), CreateGameRequest.class);
+        String authToken = ctx.header("authorization");
+        JsonObject jsonObject = JsonParser.parseString(ctx.body()).getAsJsonObject();
+        String gameName = jsonObject.get("gameName").getAsString();
+        CreateGameRequest request = new CreateGameRequest(authToken, gameName);
         CreateGameResult result = gameService.createGame(request);
         ctx.result(serializer.toJson(result));
     }
 
     private void joinGameHandler(Context ctx) {
-        //TODO: some code to extract header and form request
-        JoinGameRequest request = serializer.fromJson(ctx.body(), JoinGameRequest.class);
+        String authToken = ctx.header("authorization");
+        JsonObject jsonObject = JsonParser.parseString(ctx.body()).getAsJsonObject();
+        String playerColor = jsonObject.get("playerColor").getAsString();
+        int gameID = jsonObject.get("gameID").getAsInt();
+        JoinGameRequest request = new JoinGameRequest(authToken, playerColor, gameID);
         gameService.joinGame(request);
     }
 
@@ -113,19 +119,19 @@ public class Server {
     }
 
     private void unauthorizedHandler(UnauthorizedResponse e, @NotNull Context context) {
-        var body = serializer.toJson(Map.of("Error", e.getMessage()));
+        var body = serializer.toJson(Map.of("message", String.format("Error: %s", e.getMessage())));
         context.status(401);
         context.json(body);
     }
 
     private void badReqHandler(BadRequestResponse e, @NotNull Context context) {
-        var body = serializer.toJson(Map.of("Error", e.getMessage()));
+        var body = serializer.toJson(Map.of("message", String.format("Error: %s", e.getMessage())));
         context.status(400);
         context.json(body);
     }
 
     private void forbiddenHandler(ForbiddenResponse e, @NotNull Context context) {
-        var body = serializer.toJson(Map.of("Error", e.getMessage()));
+        var body = serializer.toJson(Map.of("message", String.format("Error: %s", e.getMessage())));
         context.status(403);
         context.json(body);
     }
