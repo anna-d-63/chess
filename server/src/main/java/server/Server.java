@@ -1,5 +1,6 @@
 package server;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dataaccess.MemoryAuthDAO;
@@ -76,7 +77,6 @@ public class Server {
         ctx.result(serializer.toJson(result));
     }
 
-    //TODO: a server error is occurring for some reason
     private void logoutHandler(Context ctx) {
         LogoutRequest request = new LogoutRequest(ctx.header("authorization"));
         userService.logout(request);
@@ -93,7 +93,11 @@ public class Server {
     private void createGameHandler(Context ctx) {
         String authToken = ctx.header("authorization");
         JsonObject jsonObject = JsonParser.parseString(ctx.body()).getAsJsonObject();
-        String gameName = jsonObject.get("gameName").getAsString();
+        JsonElement gameNameObj = jsonObject.get("gameName");
+        String gameName;
+        if(gameNameObj != null) {
+            gameName = gameNameObj.getAsString();
+        } else {gameName = null;}
         CreateGameRequest request = new CreateGameRequest(authToken, gameName);
         CreateGameResult result = gameService.createGame(request);
         ctx.result(serializer.toJson(result));
