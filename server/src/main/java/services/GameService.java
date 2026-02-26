@@ -10,6 +10,7 @@ import model.GameData;
 import server.requestAndResult.*;
 
 import java.util.Collection;
+import java.util.Objects;
 
 public class GameService {
 
@@ -48,12 +49,14 @@ public class GameService {
                 throw new ForbiddenResponse("already taken");
             }
             gameDAO.updateGame("WHITE", authData.username(), game.gameID());
-        } else {
+        } else if (request.playerColor().equals("BLACK")) {
             String bUsername = game.blackUsername();
             if (bUsername != null){
                 throw new ForbiddenResponse("already taken");
             }
             gameDAO.updateGame("BLACK", authData.username(), game.gameID());
+        } else {
+            throw new BadRequestResponse("bad request");
         }
     }
 

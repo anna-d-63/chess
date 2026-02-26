@@ -6,7 +6,6 @@ import com.google.gson.JsonParser;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
-import io.javalin.*;
 import io.javalin.Javalin;
 import io.javalin.http.*;
 import com.google.gson.Gson;
@@ -106,8 +105,16 @@ public class Server {
     private void joinGameHandler(Context ctx) {
         String authToken = ctx.header("authorization");
         JsonObject jsonObject = JsonParser.parseString(ctx.body()).getAsJsonObject();
-        String playerColor = jsonObject.get("playerColor").getAsString();
-        int gameID = jsonObject.get("gameID").getAsInt();
+        JsonElement playerColorObj = jsonObject.get("playerColor");
+        JsonElement gameIDObj = jsonObject.get("gameID");
+        String playerColor;
+        int gameID;
+        if(playerColorObj != null) {
+            playerColor = playerColorObj.getAsString();
+        } else {playerColor = null;}
+        if(gameIDObj != null) {
+            gameID = gameIDObj.getAsInt();
+        } else {gameID = 0;}
         JoinGameRequest request = new JoinGameRequest(authToken, playerColor, gameID);
         gameService.joinGame(request);
     }

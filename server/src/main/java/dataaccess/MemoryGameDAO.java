@@ -5,6 +5,7 @@ import model.GameData;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Random;
 
 public class MemoryGameDAO implements GameDAO {
@@ -17,7 +18,7 @@ public class MemoryGameDAO implements GameDAO {
         while(games.containsKey(id)){
             id = 1000 + random.nextInt();
         }
-        GameData g = new GameData(id, "", "", gameName, new ChessGame());
+        GameData g = new GameData(id, null, null, gameName, new ChessGame());
         games.put(id, g);
         return g;
     }
@@ -52,5 +53,32 @@ public class MemoryGameDAO implements GameDAO {
             updatedGame = new GameData(gameID, oldGame.whiteUsername(), username, oldGame.gameName(), oldGame.game());
         }
         games.put(gameID, updatedGame);
+    }
+
+
+    @Override
+    public String toString() {
+        return "MemoryGameDAO{" +
+                "games=" + games +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MemoryGameDAO that = (MemoryGameDAO) o;
+        return Objects.equals(games, that.games);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(games);
+    }
+
+
+    public HashMap<Integer, GameData> getGames() {
+        return games;
     }
 }
