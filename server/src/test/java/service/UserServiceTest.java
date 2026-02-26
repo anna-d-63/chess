@@ -1,14 +1,12 @@
 package service;
 
-import dataaccess.AuthDAO;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
-import dataaccess.UserDAO;
 import model.UserData;
 import org.junit.jupiter.api.*;
-import server.requestAndResult.LogoutRequest;
-import server.requestAndResult.RegisterRequest;
-import server.requestAndResult.RegisterResult;
+import server.requestandresult.LogoutRequest;
+import server.requestandresult.RegisterRequest;
+import server.requestandresult.RegisterResult;
 import services.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -1,4 +1,4 @@
-package server.requestAndResult;
+package server.requestandresult;
 
 public record LoginResult(
         String username,

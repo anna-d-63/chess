@@ -7,10 +7,9 @@ import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.UnauthorizedResponse;
 import model.AuthData;
 import model.GameData;
-import server.requestAndResult.*;
+import server.requestandresult.*;
 
 import java.util.Collection;
-import java.util.Objects;
 
 public class GameService {
 

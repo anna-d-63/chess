@@ -1,17 +1,15 @@
 package service;
 
-import com.google.gson.Gson;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.requestAndResult.CreateGameRequest;
-import server.requestAndResult.CreateGameResult;
-import server.requestAndResult.JoinGameRequest;
+import server.requestandresult.CreateGameRequest;
+import server.requestandresult.CreateGameResult;
+import server.requestandresult.JoinGameRequest;
 import services.GameService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GameServiceTest {
 
