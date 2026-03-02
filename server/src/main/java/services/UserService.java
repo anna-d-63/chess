@@ -25,7 +25,7 @@ public class UserService {
         String username = request.username();
         UserData userData  = userDAO.getUser(username);
         if (userData != null) {
-            throw new ForbiddenResponse("already Taken");
+            throw new ForbiddenResponse("already taken");
         }
         userDAO.createUser(username, request.password(), request.email());
         String authToken = createAuthToken();
@@ -53,7 +53,7 @@ public class UserService {
         authDAO.deleteAuth(request.authToken());
     }
 
-    public String createAuthToken(){
+    private String createAuthToken(){
         return UUID.randomUUID().toString();
     }
 
