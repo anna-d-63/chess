@@ -59,11 +59,11 @@ public class GameService {
         }
     }
 
-    public void checkNull(ParentRequest request) {
+    private void checkNull(ParentRequest request) {
         if (request.hasNullFields()){throw new BadRequestResponse("bad request");}
     }
 
-    public AuthData authorizeUser(String authToken){
+    private AuthData authorizeUser(String authToken){
         AuthData authData = authDAO.getAuth(authToken);
         if (authData == null){
             throw new UnauthorizedResponse("unauthorized");
