@@ -24,15 +24,15 @@ public class Server {
     private final UserService userService;
     private final GameService gameService;
     private final ClearService clearService;
-    private static final MemoryUserDAO USER_DAO = new MemoryUserDAO();
-    private static final MemoryAuthDAO AUTH_DAO = new MemoryAuthDAO();
-    private static final MemoryGameDAO GAME_DAO = new MemoryGameDAO();
-
-    public Server(){
-        this(new UserService(USER_DAO, AUTH_DAO),
-                new GameService(AUTH_DAO, GAME_DAO),
-                new ClearService(USER_DAO, AUTH_DAO, GAME_DAO));
-    }
+//    private static final MemoryUserDAO USER_DAO = new MemoryUserDAO();
+//    private static final MemoryAuthDAO AUTH_DAO = new MemoryAuthDAO();
+//    private static final MemoryGameDAO GAME_DAO = new MemoryGameDAO();
+//
+//    public Server(){
+//        this(new UserService(USER_DAO, AUTH_DAO),
+//                new GameService(AUTH_DAO, GAME_DAO),
+//                new ClearService(USER_DAO, AUTH_DAO, GAME_DAO));
+//    }
 
     public Server(UserService userService, GameService gameService, ClearService clearService) {
         this.userService = userService;

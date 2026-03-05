@@ -1,11 +1,36 @@
 
+import dataaccess.*;
 import server.Server;
+import services.ClearService;
+import services.GameService;
+import services.UserService;
 
 public class ServerMain {
     public static void main(String[] args) {
-        Server server = new Server();
-        server.run(8080);
+        try {
+            var port = 8080;
+            if (args.length >= 1){
+                port = Integer.parseInt(args[0]);
+            }
 
+            UserDAO userDAO = new MemoryUserDAO();
+            AuthDAO authDAO = new MemoryAuthDAO();
+            GameDAO gameDAO = new MemoryGameDAO();
+            if (args.length >= 2 && args[1].equals("sql")) {
+                userDAO = new MySqlUserDAO();
+                authDAO = new MySqlAuthDAO();
+                gameDAO = new MySqlGameDAO();
+            }
+
+            var userService = new UserService(userDAO, authDAO);
+            var gameService = new GameService(authDAO, gameDAO);
+            var clearService = new ClearService(userDAO, authDAO, gameDAO);
+
+            Server server = new Server(userService, gameService, clearService);
+            server.run(port);
+        } catch(Throwable ex) {
+            System.out.printf("Unable to start server: %s%n", ex.getMessage());
+        }
         System.out.println("♕ 240 Chess Server");
     }
 }
