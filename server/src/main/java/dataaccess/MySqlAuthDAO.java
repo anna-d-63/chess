@@ -2,7 +2,26 @@ package dataaccess;
 
 import model.AuthData;
 
-public class MySqlAuthDAO implements AuthDAO {
+import java.sql.Connection;
+import java.sql.SQLException;
+
+public class MySqlAuthDAO extends MySql implements AuthDAO {
+
+    public MySqlAuthDAO() throws Exception {
+        String[] createAuthStatements = {
+                """
+            CREATE TABLE IF NOT EXISTS auth (
+              `id` int NOT NULL AUTO_INCREMENT,
+              `authToken` varchar(256) NOT NULL,
+              `username` varchar(256) NOT NULL,
+              PRIMARY KEY (`id`),
+              INDEX(authToken),
+              INDEX(name),
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+        };
+        configureDatabase(createAuthStatements);
+    }
 
     @Override
     public void createAuth(String username, String authToken) {
