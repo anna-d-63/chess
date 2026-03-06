@@ -3,6 +3,7 @@ package server;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
@@ -15,6 +16,7 @@ import services.ClearService;
 import services.GameService;
 import services.UserService;
 
+import javax.xml.crypto.Data;
 import java.util.Map;
 
 public class Server {
@@ -49,7 +51,8 @@ public class Server {
                 .delete("/db", this::clearHandler)
                 .exception(ForbiddenResponse.class, this::forbiddenHandler)
                 .exception(BadRequestResponse.class, this::badReqHandler)
-                .exception(UnauthorizedResponse.class, this::unauthorizedHandler);
+                .exception(UnauthorizedResponse.class, this::unauthorizedHandler)
+                .exception(DataAccessException.class, this::generalExHandler);
 
     }
 
@@ -62,34 +65,34 @@ public class Server {
         javalin.stop();
     }
 
-    private void registerHandler(Context ctx) {
+    private void registerHandler(Context ctx) throws DataAccessException {
         RegisterRequest request = serializer.fromJson(ctx.body(), RegisterRequest.class);
         RegisterResult result = userService.register(request);
         ctx.header("Authorization", result.authToken());
         ctx.result(serializer.toJson(result));
     }
 
-    private void loginHandler(Context ctx) {
+    private void loginHandler(Context ctx) throws DataAccessException {
         LoginRequest request = serializer.fromJson(ctx.body(), LoginRequest.class);
         LoginResult result = userService.login(request);
         ctx.header("Authorization", result.authToken());
         ctx.result(serializer.toJson(result));
     }
 
-    private void logoutHandler(Context ctx) {
+    private void logoutHandler(Context ctx) throws DataAccessException {
         LogoutRequest request = new LogoutRequest(ctx.header("authorization"));
         userService.logout(request);
         ctx.result("");
         ctx.status(200);
     }
 
-    private void listGamesHandler(Context ctx) {
+    private void listGamesHandler(Context ctx) throws DataAccessException {
         ListGamesRequest request = new ListGamesRequest(ctx.header("authorization"));
         ListGamesResult result = gameService.listGames(request);
         ctx.result(serializer.toJson(result));
     }
 
-    private void createGameHandler(Context ctx) {
+    private void createGameHandler(Context ctx) throws DataAccessException {
         String authToken = ctx.header("authorization");
         JsonObject jsonObject = JsonParser.parseString(ctx.body()).getAsJsonObject();
         JsonElement gameNameObj = jsonObject.get("gameName");
@@ -102,7 +105,7 @@ public class Server {
         ctx.result(serializer.toJson(result));
     }
 
-    private void joinGameHandler(Context ctx) {
+    private void joinGameHandler(Context ctx) throws DataAccessException {
         String authToken = ctx.header("authorization");
         JsonObject jsonObject = JsonParser.parseString(ctx.body()).getAsJsonObject();
         JsonElement playerColorObj = jsonObject.get("playerColor");
@@ -119,7 +122,7 @@ public class Server {
         gameService.joinGame(request);
     }
 
-    private void clearHandler(Context ctx) {
+    private void clearHandler(Context ctx) throws DataAccessException {
         try {
             clearService.clear();
             ctx.status(200);
@@ -144,6 +147,12 @@ public class Server {
     private void forbiddenHandler(ForbiddenResponse e, @NotNull Context context) {
         var body = serializer.toJson(Map.of("message", String.format("Error: %s", e.getMessage())));
         context.status(403);
+        context.json(body);
+    }
+
+    private void generalExHandler(DataAccessException e, Context context) {
+        var body = serializer.toJson(Map.of("message", String.format("Error: %s", e.getMessage())));
+        context.status(500);
         context.json(body);
     }
 }

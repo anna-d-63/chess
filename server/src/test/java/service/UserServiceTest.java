@@ -17,7 +17,7 @@ public class UserServiceTest {
     private final UserService service = new UserService(userDAO, authDAO);
 
     @BeforeEach
-    void clear() {
+    void clear() throws Exception {
         userDAO.clearUsers();
         authDAO.clearAuth();
     }

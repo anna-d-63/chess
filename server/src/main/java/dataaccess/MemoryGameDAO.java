@@ -29,12 +29,12 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void clearGames() { //throws DataAccessException {
+    public void clearGames()  {
         games.clear();
     }
 
     @Override
-    public Collection<GameData> listGames() { //throws DataAccessException {
+    public Collection<GameData> listGames() {
         return games.values();
     }
 

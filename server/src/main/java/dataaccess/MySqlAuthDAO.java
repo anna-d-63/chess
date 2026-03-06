@@ -2,12 +2,14 @@ package dataaccess;
 
 import model.AuthData;
 
+import javax.xml.crypto.Data;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class MySqlAuthDAO extends MySql implements AuthDAO {
 
-    public MySqlAuthDAO() throws Exception {
+    public MySqlAuthDAO() throws DataAccessException {
         String[] createAuthStatements = {
                 """
             CREATE TABLE IF NOT EXISTS auth (
@@ -24,23 +26,30 @@ public class MySqlAuthDAO extends MySql implements AuthDAO {
     }
 
     @Override
-    public void createAuth(String username, String authToken) {
+    public void createAuth(String username, String authToken) throws DataAccessException {
 
     }
 
     @Override
-    public void deleteAuth(String authToken) {
+    public void deleteAuth(String authToken) throws DataAccessException {
 
     }
 
     @Override
-    public AuthData getAuth(String authToken) {
-        return null;
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM auth WHERE authToken=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, authToken);
+                try (ResultSet)
+            }
+        }
     }
 
     @Override
-    public void clearAuth() {
-
+    public void clearAuth() throws DataAccessException {
+        var statement = "TRUNCATE auth";
+        executeUpdate(statement);
     }
 
     //get Auth

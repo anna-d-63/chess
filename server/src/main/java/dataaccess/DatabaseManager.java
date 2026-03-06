@@ -19,13 +19,13 @@ public class DatabaseManager {
     /**
      * Creates the database if it does not already exist.
      */
-    static public void createDatabase() throws Exception {
+    static public void createDatabase() throws DataAccessException {
         var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
         try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);
              var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            throw new Exception("failed to create database", ex);
+            throw new DataAccessException("SQL exception failed to create database", ex);
         }
     }
 
@@ -41,21 +41,21 @@ public class DatabaseManager {
      * }
      * </code>
      */
-    static Connection getConnection() throws Exception {
+    static Connection getConnection() throws DataAccessException {
         try {
             //do not wrap the following line with a try-with-resources
             var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);
             conn.setCatalog(databaseName);
             return conn;
         } catch (SQLException ex) {
-            throw new Exception("failed to get connection", ex);
+            throw new DataAccessException("failed to get connection", ex);
         }
     }
 
     private static void loadPropertiesFromResources() {
         try (var propStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("db.properties")) {
             if (propStream == null) {
-                throw new Exception("Unable to load db.properties");
+                throw new DataAccessException("Unable to load db.properties");
             }
             Properties props = new Properties();
             props.load(propStream);
@@ -74,4 +74,7 @@ public class DatabaseManager {
         var port = Integer.parseInt(props.getProperty("db.port"));
         connectionUrl = String.format("jdbc:mysql://%s:%d", host, port);
     }
+
+
+    //do I change user and password for every user and password who logs into my server?
 }

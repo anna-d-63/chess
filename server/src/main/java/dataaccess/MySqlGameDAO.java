@@ -7,7 +7,7 @@ import java.util.List;
 
 public class MySqlGameDAO extends MySql implements GameDAO {
 
-    public MySqlGameDAO() throws Exception {
+    public MySqlGameDAO() throws DataAccessException {
         String[] createGameStatements = {
                 """
             CREATE TABLE IF NOT EXISTS auth (
@@ -26,27 +26,27 @@ public class MySqlGameDAO extends MySql implements GameDAO {
     }
 
     @Override
-    public GameData createGame(String gameName) {
+    public GameData createGame(String gameName) throws DataAccessException {
         return null;
     }
 
     @Override
-    public void clearGames() {
+    public void clearGames() throws DataAccessException {
 
     }
 
     @Override
-    public Collection<GameData> listGames() {
+    public Collection<GameData> listGames() throws DataAccessException {
         return List.of();
     }
 
     @Override
-    public GameData getGame(int gameID) {
+    public GameData getGame(int gameID) throws DataAccessException {
         return null;
     }
 
     @Override
-    public void updateGame(String playerColor, String username, int gameID) {
+    public void updateGame(String playerColor, String username, int gameID) throws DataAccessException {
 
     }
 

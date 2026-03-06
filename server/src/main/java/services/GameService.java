@@ -1,6 +1,7 @@
 package services;
 
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.ForbiddenResponse;
@@ -21,21 +22,21 @@ public class GameService {
         this.gameDAO = gameDAO;
     }
 
-    public ListGamesResult listGames(ListGamesRequest request){
+    public ListGamesResult listGames(ListGamesRequest request) throws DataAccessException {
         checkNull(request);
         AuthData authData = authorizeUser(request.authToken());
         Collection<GameData> games = gameDAO.listGames();
         return new ListGamesResult(games);
     }
 
-    public CreateGameResult createGame(CreateGameRequest request){
+    public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException {
         checkNull(request);
         AuthData authData = authorizeUser(request.authToken());
         GameData gameData = gameDAO.createGame(request.gameName());
         return new CreateGameResult(gameData.gameID());
     }
 
-    public void joinGame(JoinGameRequest request){
+    public void joinGame(JoinGameRequest request) throws DataAccessException {
         checkNull(request);
         AuthData authData = authorizeUser(request.authToken());
         GameData game = gameDAO.getGame(request.gameID());
