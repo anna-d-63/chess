@@ -2,13 +2,11 @@ package dataAccess;
 
 import dataaccess.DataAccessException;
 import dataaccess.MySqlUserDAO;
-import io.javalin.http.UnauthorizedResponse;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
 
-import javax.xml.crypto.Data;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
