@@ -3,11 +3,11 @@ package dataaccess;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 public class MySqlUserDAO extends MySql implements UserDAO {
 
@@ -52,8 +52,8 @@ public class MySqlUserDAO extends MySql implements UserDAO {
                     }
                 }
             }
-        } catch (Exception e) {
-            throw new DataAccessException("failed to get pet", e);
+        } catch (SQLException e) {
+            throw new DataAccessException("failed to get user", e);
         }
         return null;
     }
@@ -65,6 +65,26 @@ public class MySqlUserDAO extends MySql implements UserDAO {
     }
 
     //getUsers
+    public HashMap<String, UserData> getUsers() throws DataAccessException {
+        HashMap<String, UserData> users = new HashMap<>();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * from users";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()){
+                        var user = rs.getString("username");
+                        var password = rs.getString("password");
+                        var email = rs.getString("email");
+
+                        users.put(user, new UserData(user, password, email));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("failed to get users", e);
+        }
+        return users;
+    }
 
     @Override
     public int hashCode() {
