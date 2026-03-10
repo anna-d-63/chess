@@ -12,10 +12,7 @@ import services.GameService;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameServiceTest {
-    /*
-    private final MemoryGameDAO gameDAO = new MemoryGameDAO();
-    private final MemoryAuthDAO authDAO = new MemoryAuthDAO();
-    */
+
     private final MySqlAuthDAO authDAO = new MySqlAuthDAO();
     private final MySqlGameDAO gameDAO = new MySqlGameDAO();
 

@@ -11,10 +11,7 @@ import services.UserService;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTest {
-    /*
-    private final MemoryUserDAO userDAO = new MemoryUserDAO();
-    private final MemoryAuthDAO authDAO = new MemoryAuthDAO();
-     */
+
     private final MySqlUserDAO userDAO = new MySqlUserDAO();
     private final MySqlAuthDAO authDAO = new MySqlAuthDAO();
 

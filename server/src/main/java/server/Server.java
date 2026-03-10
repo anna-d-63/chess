@@ -22,9 +22,7 @@ public class Server {
     private final UserService userService;
     private final GameService gameService;
     private final ClearService clearService;
-//    private static final MemoryUserDAO USER_DAO = new MemoryUserDAO();
-//    private static final MemoryAuthDAO AUTH_DAO = new MemoryAuthDAO();
-//    private static final MemoryGameDAO GAME_DAO = new MemoryGameDAO();
+
     private static final MySqlUserDAO USER_DAO;
     private static final MySqlAuthDAO AUTH_DAO;
     private static final MySqlGameDAO GAME_DAO;
