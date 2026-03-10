@@ -1,8 +1,6 @@
 package service;
 
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.UnauthorizedResponse;
 import model.UserData;
@@ -13,9 +11,17 @@ import services.UserService;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTest {
+    /*
     private final MemoryUserDAO userDAO = new MemoryUserDAO();
     private final MemoryAuthDAO authDAO = new MemoryAuthDAO();
+     */
+    private final MySqlUserDAO userDAO = new MySqlUserDAO();
+    private final MySqlAuthDAO authDAO = new MySqlAuthDAO();
+
     private final UserService service = new UserService(userDAO, authDAO);
+
+    public UserServiceTest() throws DataAccessException {
+    }
 
     @BeforeEach
     void clear() throws DataAccessException {

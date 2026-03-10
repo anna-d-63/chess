@@ -1,8 +1,6 @@
 package service;
 
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
+import dataaccess.*;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.UnauthorizedResponse;
@@ -14,13 +12,20 @@ import services.GameService;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameServiceTest {
-
+    /*
     private final MemoryGameDAO gameDAO = new MemoryGameDAO();
     private final MemoryAuthDAO authDAO = new MemoryAuthDAO();
+    */
+    private final MySqlAuthDAO authDAO = new MySqlAuthDAO();
+    private final MySqlGameDAO gameDAO = new MySqlGameDAO();
+
     private final GameService service = new GameService(authDAO, gameDAO);
 
+    public GameServiceTest() throws DataAccessException {
+    }
+
     @BeforeEach
-    void clear() {
+    void clear() throws DataAccessException{
         gameDAO.clearGames();
         authDAO.clearAuth();
 

@@ -1,9 +1,7 @@
 package service;
 
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.requestandresult.CreateGameRequest;
 import server.requestandresult.CreateGameResult;
@@ -16,12 +14,28 @@ import services.UserService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ClearServiceTest {
+    /*
     private final MemoryUserDAO userDAO = new MemoryUserDAO();
     private final MemoryAuthDAO authDAO = new MemoryAuthDAO();
     private final MemoryGameDAO gameDAO = new MemoryGameDAO();
+     */
+    private final MySqlUserDAO userDAO = new MySqlUserDAO();
+    private final MySqlAuthDAO authDAO = new MySqlAuthDAO();
+    private final MySqlGameDAO gameDAO = new MySqlGameDAO();
+
     private final UserService userService = new UserService(userDAO, authDAO);
     private final GameService gameService = new GameService(authDAO, gameDAO);
     private final ClearService clearService = new ClearService(userDAO, authDAO, gameDAO);
+
+    public ClearServiceTest() throws DataAccessException {
+    }
+
+    @BeforeEach
+    void makeNothingThere() throws DataAccessException {
+        userDAO.clearUsers();
+        authDAO.clearAuth();
+        gameDAO.clearGames();
+    }
 
     @Test
     void buildDatabaseAndClear() throws DataAccessException {
