@@ -64,7 +64,7 @@ public class GameService {
         if (request.hasNullFields()){throw new BadRequestResponse("bad request");}
     }
 
-    private AuthData authorizeUser(String authToken){
+    private AuthData authorizeUser(String authToken) throws DataAccessException {
         AuthData authData = authDAO.getAuth(authToken);
         if (authData == null){
             throw new UnauthorizedResponse("unauthorized");

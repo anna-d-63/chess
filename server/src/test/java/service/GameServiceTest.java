@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import io.javalin.http.BadRequestResponse;
@@ -27,7 +28,7 @@ public class GameServiceTest {
     }
 
     @Test
-    void createNewGame(){
+    void createNewGame() throws DataAccessException {
         CreateGameRequest request = new CreateGameRequest("authToken", "gameName");
         CreateGameResult result = service.createGame(request);
 
@@ -36,7 +37,7 @@ public class GameServiceTest {
     }
 
     @Test
-    void badCreateGame(){
+    void badCreateGame() throws DataAccessException {
         CreateGameRequest createGameRequest = new CreateGameRequest("badAuthToken", "gameName");
         UnauthorizedResponse e = assertThrows(UnauthorizedResponse.class,
                 ()->service.createGame(createGameRequest));
@@ -45,7 +46,7 @@ public class GameServiceTest {
     }
 
     @Test
-    void joinAGame(){
+    void joinAGame() throws DataAccessException {
         CreateGameRequest request = new CreateGameRequest("authToken", "newGame");
         CreateGameResult result = service.createGame(request);
 
@@ -57,7 +58,7 @@ public class GameServiceTest {
     }
 
     @Test
-    void joinGameWrongID(){
+    void joinGameWrongID() throws DataAccessException {
         CreateGameRequest makeGame = new CreateGameRequest("authToken", "gameName");
         CreateGameResult result = service.createGame(makeGame);
 
@@ -69,7 +70,7 @@ public class GameServiceTest {
     }
 
     @Test
-    void joinGameUserTaken(){
+    void joinGameUserTaken() throws DataAccessException {
         CreateGameRequest newGame = new CreateGameRequest("authToken", "gameName");
         CreateGameResult result = service.createGame(newGame);
 
@@ -87,7 +88,7 @@ public class GameServiceTest {
     }
 
     @Test
-    void listAllGames(){
+    void listAllGames() throws DataAccessException {
         var game1 = new CreateGameRequest("authToken", "game1");
         CreateGameResult game1result = service.createGame(game1);
 
@@ -103,7 +104,7 @@ public class GameServiceTest {
     }
 
     @Test
-    void badListGames(){
+    void badListGames() throws DataAccessException {
         var newGame = new CreateGameRequest("authToken", "gameName");
         CreateGameResult result = service.createGame(newGame);
 

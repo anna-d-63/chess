@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
 import io.javalin.http.ForbiddenResponse;
@@ -17,13 +18,13 @@ public class UserServiceTest {
     private final UserService service = new UserService(userDAO, authDAO);
 
     @BeforeEach
-    void clear() throws Exception {
+    void clear() throws DataAccessException {
         userDAO.clearUsers();
         authDAO.clearAuth();
     }
 
     @Test
-    void registerNewUser(){
+    void registerNewUser() throws DataAccessException {
         UserData user = new UserData("Anna", "password", "anna@email.com");
         RegisterRequest request = new RegisterRequest(user.username(), user.password(), user.email());
         RegisterResult result = service.register(request);
@@ -34,7 +35,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void alreadyTakenRegister(){
+    void alreadyTakenRegister() throws DataAccessException {
         UserData goodUser = new UserData("kevin", "pwd", "kevin@email.com");
         RegisterRequest goodRequest = new RegisterRequest(goodUser.username(), goodUser.password(), goodUser.password());
         RegisterResult goodResult = service.register(goodRequest);
@@ -51,7 +52,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void logoutUser(){
+    void logoutUser() throws DataAccessException {
         UserData user = new UserData("Anna", "password", "anna@email.com");
         RegisterRequest request = new RegisterRequest(user.username(), user.password(), user.email());
         RegisterResult result = service.register(request);
@@ -69,7 +70,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void badLogout(){
+    void badLogout() throws DataAccessException {
         RegisterRequest registerReq = new RegisterRequest("Anna", "pwd", "anna@email.com");
         RegisterResult registerRes = service.register(registerReq);
 
@@ -85,7 +86,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void loginUser(){
+    void loginUser() throws DataAccessException {
         //register first
         RegisterRequest registerFirst = new RegisterRequest("Anna", "password", "anna@email.com");
         RegisterResult registerResult = service.register(registerFirst);
@@ -111,7 +112,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void badLoginPassword(){
+    void badLoginPassword() throws DataAccessException {
         //register
         RegisterRequest registerRequest = new RegisterRequest("kevin", "password", "kevin@email.com");
         RegisterResult registerResult = service.register(registerRequest);

@@ -40,7 +40,7 @@ public class UserService {
         String username = request.username();
         UserData userData  = userDAO.getUser(username);
         checkIfAuthorized(userData);
-        if (verifyUser(username, request.password(), userData.password())){ //!request.password().equals(userData.password())
+        if (!verifyUser(username, request.password(), userData.password())){ //!request.password().equals(userData.password())
             throw new UnauthorizedResponse("unauthorized");
         }
         String authToken = createAuthToken();

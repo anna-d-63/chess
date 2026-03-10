@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
@@ -23,7 +24,7 @@ public class ClearServiceTest {
     private final ClearService clearService = new ClearService(userDAO, authDAO, gameDAO);
 
     @Test
-    void buildDatabaseAndClear(){
+    void buildDatabaseAndClear() throws DataAccessException {
         //2 users
         var user1 = new RegisterRequest("Anna", "password", "anna@email.com");
         RegisterResult user1result = userService.register(user1);
