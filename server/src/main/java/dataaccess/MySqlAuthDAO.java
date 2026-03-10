@@ -2,10 +2,11 @@ package dataaccess;
 
 import model.AuthData;
 
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 public class MySqlAuthDAO extends MySql implements AuthDAO {
 
@@ -27,23 +28,34 @@ public class MySqlAuthDAO extends MySql implements AuthDAO {
 
     @Override
     public void createAuth(String username, String authToken) throws DataAccessException {
-
+        var statement = "INSERT INTO auth (authToken, username) values (?, ?)";
+        int id = executeUpdate(statement, authToken, username);
     }
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
-
+        var statement = "DELETE FROM auth WHERE authToken=?";
+        executeUpdate(statement, authToken);
     }
 
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException {
-//        try (Connection conn = DatabaseManager.getConnection()) {
-//            var statement = "SELECT * FROM auth WHERE authToken=?";
-//            try (PreparedStatement ps = conn.prepareStatement(statement)) {
-//                ps.setString(1, authToken);
-//                try (ResultSet)
-//            }
-//        }
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM auth WHERE authToken=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, authToken);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        var user = rs.getString("username");
+                        var auth = rs.getString("authToken");
+
+                        return new AuthData(auth, user);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("failed to get auth", e);
+        }
         return null;
     }
 
@@ -53,7 +65,25 @@ public class MySqlAuthDAO extends MySql implements AuthDAO {
         executeUpdate(statement);
     }
 
-    //get Auth
+    public HashMap<String, AuthData> getAuth() throws DataAccessException {
+        HashMap<String, AuthData> auths = new HashMap<>();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * from auth";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()){
+                        var username = rs.getString("username");
+                        var authToken = rs.getString("authToken");
+
+                        auths.put(authToken, new AuthData(authToken, username));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("failed to get users", e);
+        }
+        return auths;
+    }
 
     @Override
     public int hashCode() {

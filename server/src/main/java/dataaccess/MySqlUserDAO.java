@@ -64,7 +64,6 @@ public class MySqlUserDAO extends MySql implements UserDAO {
         executeUpdate(statement);
     }
 
-    //getUsers
     public HashMap<String, UserData> getUsers() throws DataAccessException {
         HashMap<String, UserData> users = new HashMap<>();
         try (Connection conn = DatabaseManager.getConnection()) {
