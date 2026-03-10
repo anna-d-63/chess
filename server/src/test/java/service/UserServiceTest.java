@@ -30,7 +30,7 @@ public class UserServiceTest {
         RegisterResult result = service.register(request);
 
         assertEquals(1, userDAO.getUsers().size());
-        assertEquals(1, authDAO.getAuth().size());
+        assertEquals(1, authDAO.getAuths().size());
         assertTrue(userDAO.getUsers().containsKey("Anna"));
     }
 
@@ -41,7 +41,7 @@ public class UserServiceTest {
         RegisterResult goodResult = service.register(goodRequest);
 
         assertEquals(1, userDAO.getUsers().size());
-        assertEquals(1, authDAO.getAuth().size());
+        assertEquals(1, authDAO.getAuths().size());
         assertTrue(userDAO.getUsers().containsKey("kevin"));
 
         RegisterRequest alreadyTakenRequest = new RegisterRequest("kevin", "pwd2", "kevin2@email.com");
@@ -58,14 +58,14 @@ public class UserServiceTest {
         RegisterResult result = service.register(request);
 
         assertEquals(1, userDAO.getUsers().size());
-        assertEquals(1, authDAO.getAuth().size());
+        assertEquals(1, authDAO.getAuths().size());
         assertTrue(userDAO.getUsers().containsKey("Anna"));
 
         LogoutRequest logoutRequest = new LogoutRequest(result.authToken());
         service.logout(logoutRequest);
 
         assertEquals(1, userDAO.getUsers().size());
-        assertEquals(0, authDAO.getAuth().size());
+        assertEquals(0, authDAO.getAuths().size());
         assertTrue(userDAO.getUsers().containsKey("Anna"));
     }
 
@@ -75,7 +75,7 @@ public class UserServiceTest {
         RegisterResult registerRes = service.register(registerReq);
 
         assertEquals(1, userDAO.getUsers().size());
-        assertEquals(1, authDAO.getAuth().size());
+        assertEquals(1, authDAO.getAuths().size());
         assertTrue(userDAO.getUsers().containsKey("Anna"));
 
         LogoutRequest logoutRequest = new LogoutRequest("fakeAuthToken");
@@ -92,7 +92,7 @@ public class UserServiceTest {
         RegisterResult registerResult = service.register(registerFirst);
 
         assertEquals(1, userDAO.getUsers().size());
-        assertEquals(1, authDAO.getAuth().size());
+        assertEquals(1, authDAO.getAuths().size());
         assertTrue(userDAO.getUsers().containsKey("Anna"));
 
         //log them out
@@ -100,14 +100,14 @@ public class UserServiceTest {
         service.logout(logoutRequest);
 
         assertEquals(1, userDAO.getUsers().size());
-        assertEquals(0, authDAO.getAuth().size());
+        assertEquals(0, authDAO.getAuths().size());
 
         //log back in
         LoginRequest logBackIn = new LoginRequest("Anna", "password");
         LoginResult result = service.login(logBackIn);
 
         assertEquals(1, userDAO.getUsers().size());
-        assertEquals(1, authDAO.getAuth().size());
+        assertEquals(1, authDAO.getAuths().size());
         assertNotEquals(registerResult.authToken(), result.authToken());
     }
 
@@ -118,7 +118,7 @@ public class UserServiceTest {
         RegisterResult registerResult = service.register(registerRequest);
 
         assertEquals(1, userDAO.getUsers().size());
-        assertEquals(1, authDAO.getAuth().size());
+        assertEquals(1, authDAO.getAuths().size());
         assertTrue(userDAO.getUsers().containsKey("kevin"));
 
         //logout
@@ -126,7 +126,7 @@ public class UserServiceTest {
         service.logout(logoutReq);
 
         assertEquals(1, userDAO.getUsers().size());
-        assertEquals(0, authDAO.getAuth().size());
+        assertEquals(0, authDAO.getAuths().size());
 
         //bad login
         LoginRequest badLogin = new LoginRequest("kevin", "wrongPassword");

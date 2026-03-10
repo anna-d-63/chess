@@ -32,7 +32,7 @@ public class GameServiceTest {
         CreateGameRequest request = new CreateGameRequest("authToken", "gameName");
         CreateGameResult result = service.createGame(request);
 
-        assertEquals(1, authDAO.getAuth().size());
+        assertEquals(1, authDAO.getAuths().size());
         assertEquals(1, gameDAO.getGames().size());
     }
 

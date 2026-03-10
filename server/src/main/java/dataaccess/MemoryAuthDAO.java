@@ -50,7 +50,7 @@ public class MemoryAuthDAO implements AuthDAO{
         return Objects.hashCode(auth);
     }
 
-    public HashMap<String, AuthData> getAuth() {
+    public HashMap<String, AuthData> getAuths() {
         return auth;
     }
 }

@@ -29,7 +29,7 @@ public class MySqlAuthDAO extends MySql implements AuthDAO {
     @Override
     public void createAuth(String username, String authToken) throws DataAccessException {
         var statement = "INSERT INTO auth (authToken, username) values (?, ?)";
-        int id = executeUpdate(statement, authToken, username);
+        executeUpdate(statement, authToken, username);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class MySqlAuthDAO extends MySql implements AuthDAO {
         executeUpdate(statement);
     }
 
-    public HashMap<String, AuthData> getAuth() throws DataAccessException {
+    public HashMap<String, AuthData> getAuths() throws DataAccessException {
         HashMap<String, AuthData> auths = new HashMap<>();
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * from auth";

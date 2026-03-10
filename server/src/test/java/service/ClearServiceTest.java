@@ -33,7 +33,7 @@ public class ClearServiceTest {
         RegisterResult user2result = userService.register(user2);
 
         assertEquals(2, userDAO.getUsers().size());
-        assertEquals(2, authDAO.getAuth().size());
+        assertEquals(2, authDAO.getAuths().size());
 
         //2 games
         var game1 = new CreateGameRequest(user1result.authToken(), "game1");
@@ -48,7 +48,7 @@ public class ClearServiceTest {
         clearService.clear();
 
         assertEquals(0, userDAO.getUsers().size());
-        assertEquals(0, authDAO.getAuth().size());
+        assertEquals(0, authDAO.getAuths().size());
         assertEquals(0, gameDAO.getGames().size());
     }
 }
