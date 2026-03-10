@@ -1,7 +1,5 @@
-package dataAccess;
+package dataaccess;
 
-import dataaccess.DataAccessException;
-import dataaccess.MySqlAuthDAO;
 import model.AuthData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +41,7 @@ public class SQLAuthTest {
     }
 
     @Test
-    void failToAddAuth() throws DataAccessException {
+    void failToAddAuth() {
         DataAccessException e = assertThrows(DataAccessException.class,
                 ()->authDAO.createAuth(null, null));
     }

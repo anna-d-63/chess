@@ -13,14 +13,9 @@ public class ServerMain {
                 port = Integer.parseInt(args[0]);
             }
 
-            UserDAO userDAO = new MemoryUserDAO();
-            AuthDAO authDAO = new MemoryAuthDAO();
-            GameDAO gameDAO = new MemoryGameDAO();
-            if (args.length >= 2 && args[1].equals("sql")) {
-                userDAO = new MySqlUserDAO();
-                authDAO = new MySqlAuthDAO();
-                gameDAO = new MySqlGameDAO();
-            }
+            UserDAO userDAO = new MySqlUserDAO();
+            AuthDAO authDAO = new MySqlAuthDAO();
+            GameDAO gameDAO = new MySqlGameDAO();
 
             var userService = new UserService(userDAO, authDAO);
             var gameService = new GameService(authDAO, gameDAO);

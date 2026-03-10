@@ -1,7 +1,5 @@
-package dataAccess;
+package dataaccess;
 
-import dataaccess.DataAccessException;
-import dataaccess.MySqlGameDAO;
 import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,16 +41,16 @@ public class SQLGameTest {
     }
 
     @Test
-    void addBadGame() throws DataAccessException {
+    void addBadGame() {
         DataAccessException e = assertThrows(DataAccessException.class,
                 ()->gameDAO.createGame(null));
     }
 
     @Test
     void getGameOfMany() throws DataAccessException {
-        GameData game1 = gameDAO.createGame("One");
+        gameDAO.createGame("One");
         GameData game2 = gameDAO.createGame("Two");
-        GameData game3 = gameDAO.createGame("Three");
+        gameDAO.createGame("Three");
 
         GameData wantedGame = gameDAO.getGame(game2.gameID());
 

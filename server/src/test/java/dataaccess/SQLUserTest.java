@@ -1,7 +1,5 @@
-package dataAccess;
+package dataaccess;
 
-import dataaccess.DataAccessException;
-import dataaccess.MySqlUserDAO;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +51,7 @@ public class SQLUserTest {
     }
 
     @Test
-    void badCreateUser() throws DataAccessException {
+    void badCreateUser() {
         DataAccessException e = assertThrows(DataAccessException.class,
                 ()->userDAO.createUser(null, null, null));
     }

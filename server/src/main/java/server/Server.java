@@ -3,10 +3,7 @@ package server;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import io.javalin.Javalin;
 import io.javalin.http.*;
 import com.google.gson.Gson;
@@ -16,7 +13,6 @@ import services.ClearService;
 import services.GameService;
 import services.UserService;
 
-import javax.xml.crypto.Data;
 import java.util.Map;
 
 public class Server {
@@ -26,11 +22,24 @@ public class Server {
     private final UserService userService;
     private final GameService gameService;
     private final ClearService clearService;
-    private static final MemoryUserDAO USER_DAO = new MemoryUserDAO();
-    private static final MemoryAuthDAO AUTH_DAO = new MemoryAuthDAO();
-    private static final MemoryGameDAO GAME_DAO = new MemoryGameDAO();
+//    private static final MemoryUserDAO USER_DAO = new MemoryUserDAO();
+//    private static final MemoryAuthDAO AUTH_DAO = new MemoryAuthDAO();
+//    private static final MemoryGameDAO GAME_DAO = new MemoryGameDAO();
+    private static final MySqlUserDAO USER_DAO;
+    private static final MySqlAuthDAO AUTH_DAO;
+    private static final MySqlGameDAO GAME_DAO;
 
-    public Server(){
+    static {
+        try {
+            USER_DAO = new MySqlUserDAO();
+            AUTH_DAO = new MySqlAuthDAO();
+            GAME_DAO = new MySqlGameDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Server() {
         this(new UserService(USER_DAO, AUTH_DAO),
                 new GameService(AUTH_DAO, GAME_DAO),
                 new ClearService(USER_DAO, AUTH_DAO, GAME_DAO));
@@ -123,13 +132,7 @@ public class Server {
     }
 
     private void clearHandler(Context ctx) throws DataAccessException {
-        try {
-            clearService.clear();
-            ctx.status(200);
-        } catch (Exception e) {
-            ctx.status(500);
-            throw new InternalServerErrorResponse();
-        }
+        clearService.clear();
     }
 
     private void unauthorizedHandler(UnauthorizedResponse e, @NotNull Context context) {
