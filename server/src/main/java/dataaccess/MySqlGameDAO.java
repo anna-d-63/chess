@@ -27,8 +27,7 @@ public class MySqlGameDAO extends MySql implements GameDAO {
               `gameName` varchar(256) NOT NULL,
               `gameJson` TEXT DEFAULT NULL,
               PRIMARY KEY (`gameID`),
-              INDEX(gameName),
-              INDEX(gameJson),
+              INDEX(gameName)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
         };
