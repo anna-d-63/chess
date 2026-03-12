@@ -162,3 +162,29 @@ or make the move. basically just try the move and see if it leaves you in check.
 
 
 make a copy of the board, run all the simulations on that
+
+
+
+## Phase 5
+
+display menus/accept and process input (REPL) 
+
+need to make a list of options of what the user can do. For example, 
+1. Login 
+2. Register 
+3. Help
+4. Quit
+
+need prelogin UI and postlogin UI. keep track of the authtoken in loop to see if they are logged in. \
+If authtoken is null, not logged in. If not null, they are logged in.
+
+redo game ID thing. they should be sequential and autoincremented. \
+independent of what the game id is, they should be listed in sequential order. \
+need to keep a mapping of display number and actual game ID.
+
+Draw Chess Board \
+can use unicode chess characters.
+if you observe, draw from the point of view of the white player. \
+difference in where the numbers and letters are. \
+Invoke Server API Endpoints \
+Write tests
