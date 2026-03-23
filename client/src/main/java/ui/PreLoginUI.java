@@ -2,27 +2,84 @@ package ui;
 
 import client.ServerFacade;
 import dataaccess.DataAccessException;
+import server.requestandresult.LoginRequest;
+import server.requestandresult.LoginResult;
+import server.requestandresult.RegisterRequest;
+import server.requestandresult.RegisterResult;
+
+import java.util.Arrays;
+
+import static ui.EscapeSequences.*;
 
 public class PreLoginUI implements ClientUI {
 
-    private final ServerFacade server;
+    private final ServerFacade facade;
+    private String authToken = null;
 
     PreLoginUI(int port) throws DataAccessException {
-        server = new ServerFacade(port);
+        facade = new ServerFacade(port);
     }
 
     @Override
     public String eval(String line) {
-        return "";
+        try {
+            String[] tokens = line.toLowerCase().split(" ");
+            String cmd = (tokens.length > 0) ? tokens[0] : "help";
+            String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            return switch(cmd) {
+                case "register" -> registerClient(params);
+                case "login" -> loginClient(params);
+                case "quit" -> "quit";
+                default -> help();
+            };
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 
     @Override
     public String firstLine() {
-        return "";
+        return SET_TEXT_COLOR_MAGENTA + BLACK_KING +
+                "Welcome to Chess. Type a command below to get started."
+                + BLACK_QUEEN;
     }
 
     @Override
     public String help() {
-        return "";
+        return """
+                register <USERNAME> <PASSWORD> <EMAIL> - create an account
+                login <USERNAME> <PASSWORD> - play chess
+                quit - leave the application
+                help - view this menu again
+                """;
+    }
+
+    private String registerClient(String[] params) throws DataAccessException {
+        if (params.length == 3) {
+            var registerRequest = new RegisterRequest(params[0], params[1], params[2]);
+            RegisterResult registerResult = facade.register(registerRequest);
+            authToken = registerResult.authToken();
+            return String.format("You are signed in as %s", registerResult.username());
+        }
+        throw new DataAccessException("Expected: <USERNAME> <PASSWORD> <EMAIL>");
+    }
+
+    private String loginClient(String[] params) throws DataAccessException {
+        if (params.length == 2) {
+            var loginRequest = new LoginRequest(params[0], params[1]);
+            LoginResult loginResult = facade.login(loginRequest);
+            authToken = loginResult.authToken();
+            return String.format("You are signed in as %s", loginResult.username());
+        }
+        throw new DataAccessException("Expected: <USERNAME> <PASSWORD>");
+    }
+
+    public String getAuthToken() {
+        return this.authToken;
+    }
+
+    @Override
+    public boolean readyToBreak() {
+        return authToken != null;
     }
 }

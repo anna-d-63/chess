@@ -25,4 +25,9 @@ public class InGameUI implements ClientUI {
     public String help() {
         return "";
     }
+
+    @Override
+    public boolean readyToBreak() {
+        return false;
+    }
 }

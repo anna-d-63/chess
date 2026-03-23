@@ -17,7 +17,14 @@ public class Repl {
         inGame = new InGameUI(port);
     }
 
-    public void loop(ClientUI ui) {
+    public void run() {
+        loop(preLogin);
+        if (preLogin.readyToBreak()) {
+           loop(postLogin);
+        }
+    }
+
+    private void loop(ClientUI ui) {
         System.out.println(ui.firstLine());
         System.out.print(ui.help());
 
@@ -30,6 +37,7 @@ public class Repl {
             try {
                 result = ui.eval(line);
                 System.out.print(SET_TEXT_COLOR_BLUE + result);
+                if (ui.readyToBreak()) {break;}
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -39,6 +47,6 @@ public class Repl {
     }
 
     private void printPrompt() {
-        System.out.print("\n" + SET_TEXT_COLOR_BLACK + ">>> " + SET_TEXT_COLOR_GREEN);
+        System.out.print("\n" + SET_TEXT_COLOR_GREEN + ">>> ");
     }
 }
