@@ -20,7 +20,8 @@ public class Repl {
     public void run() {
         loop(preLogin);
         if (preLogin.readyToBreak()) {
-           loop(postLogin);
+            postLogin.setAuthToken(preLogin.getAuthToken());
+            loop(postLogin);
         }
     }
 

@@ -46,7 +46,7 @@ public class PreLoginUI implements ClientUI {
 
     @Override
     public String help() {
-        return """
+        return SET_TEXT_COLOR_BLUE + """
                 register <USERNAME> <PASSWORD> <EMAIL> - create an account
                 login <USERNAME> <PASSWORD> - play chess
                 quit - leave the application
