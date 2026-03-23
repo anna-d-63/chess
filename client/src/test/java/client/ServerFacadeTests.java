@@ -73,4 +73,48 @@ public class ServerFacadeTests {
         assertNotNull(loginResult.authToken());
     }
 
+    @Test
+    public void createGame() throws DataAccessException {
+        var registerRequest = new RegisterRequest("Anna", "pwd", "anna@email.com");
+        RegisterResult registerResult = facade.register(registerRequest);
+
+        var createGameRequest = new CreateGameRequest(registerResult.authToken(), "game1");
+        CreateGameResult createGameResult = facade.createGame(createGameRequest, registerResult.authToken());
+
+        assertNotNull(createGameResult.gameID());
+    }
+
+    @Test
+    public void joinGame() throws DataAccessException {
+        var registerRequest = new RegisterRequest("Anna", "pwd", "anna@email.com");
+        RegisterResult registerResult = facade.register(registerRequest);
+
+        var createGameRequest = new CreateGameRequest(registerResult.authToken(), "game1");
+        CreateGameResult createGameResult = facade.createGame(createGameRequest, registerResult.authToken());
+
+        var joinGameRequest = new JoinGameRequest(
+                registerResult.authToken(), "WHITE", createGameResult.gameID());
+        facade.joinGame(joinGameRequest, registerResult.authToken());
+    }
+
+    @Test
+    public void listGames() throws DataAccessException {
+        var registerRequest = new RegisterRequest("Anna", "pwd", "anna@email.com");
+        RegisterResult registerResult = facade.register(registerRequest);
+        var authToken = registerResult.authToken();
+
+        var createGameRequest1 = new CreateGameRequest(authToken, "game1");
+        facade.createGame(createGameRequest1, authToken);
+
+        var createGameRequest2 = new CreateGameRequest(authToken, "game2");
+        facade.createGame(createGameRequest2, authToken);
+
+        var createGameRequest3 = new CreateGameRequest(authToken, "game3");
+        facade.createGame(createGameRequest3, authToken);
+
+        var listGamesRequest = new ListGamesRequest(authToken);
+        ListGamesResult listGamesResult = facade.listGames(listGamesRequest, authToken);
+
+        assertNotNull(listGamesResult);
+    }
 }

@@ -37,6 +37,24 @@ public class ServerFacade {
         handleResponse(response, null);
     }
 
+    public CreateGameResult createGame(CreateGameRequest request, String authToken) throws DataAccessException {
+        var req = buildRequest("POST", "/game", request, authToken);
+        var response = sendRequest(req);
+        return handleResponse(response, CreateGameResult.class);
+    }
+
+    public void joinGame(JoinGameRequest joinGameRequest, String authToken) throws DataAccessException {
+        var req = buildRequest("PUT", "/game", joinGameRequest, authToken);
+        var response = sendRequest(req);
+        handleResponse(response, null);
+    }
+
+    public ListGamesResult listGames(ListGamesRequest listGamesRequest, String authToken) throws DataAccessException {
+        var req = buildRequest("GET", "/game", listGamesRequest, authToken);
+        var response = sendRequest(req);
+        return handleResponse(response, ListGamesResult.class);
+    }
+
     public void clear() throws DataAccessException {
         var request = buildRequest("DELETE", "/db", null, null);
         sendRequest(request);
@@ -83,10 +101,4 @@ public class ServerFacade {
     private boolean isSuccessful(int status) {
         return status/100 == 2;
     }
-
-//    public CreateGameResult createGame(CreateGameRequest request) {}
-//
-//    public void joinGame(JoinGameRequest request) {}
-//
-//    public ListGamesResult listGames(ListGamesRequest request) {}
 }
