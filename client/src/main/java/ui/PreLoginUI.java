@@ -2,19 +2,22 @@ package ui;
 
 import client.ServerFacade;
 import dataaccess.DataAccessException;
+import model.GameData;
 import server.requestandresult.LoginRequest;
 import server.requestandresult.LoginResult;
 import server.requestandresult.RegisterRequest;
 import server.requestandresult.RegisterResult;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import static ui.EscapeSequences.*;
 
 public class PreLoginUI implements ClientUI {
 
     private final ServerFacade facade;
-    private String authToken = null;
+    public String authToken = null;
+    public GameData gameData = null;
 
     PreLoginUI(int port) throws DataAccessException {
         facade = new ServerFacade(port);
@@ -74,12 +77,31 @@ public class PreLoginUI implements ClientUI {
         throw new DataAccessException("Expected: <USERNAME> <PASSWORD>");
     }
 
+    @Override
+    public boolean readyToBreak() {
+        return authToken != null;
+    }
+
     public String getAuthToken() {
         return this.authToken;
     }
 
     @Override
-    public boolean readyToBreak() {
-        return authToken != null;
+    public GameData getGameData() {
+        return this.gameData;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PreLoginUI that = (PreLoginUI) o;
+        return Objects.equals(facade, that.facade) && Objects.equals(authToken, that.authToken) && Objects.equals(gameData, that.gameData);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(facade, authToken, gameData);
     }
 }

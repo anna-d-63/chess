@@ -18,14 +18,7 @@ public class Repl {
     }
 
     public void run() {
-        loop(preLogin);
-        if (preLogin.readyToBreak()) {
-            postLogin.setAuthToken(preLogin.getAuthToken());
-            loop(postLogin);
-        }
-    }
-
-    private void loop(ClientUI ui) {
+        ClientUI ui = preLogin;
         System.out.println(ui.firstLine());
         System.out.print(ui.help());
 
@@ -37,8 +30,14 @@ public class Repl {
             String line = scanner.nextLine();
             try {
                 result = ui.eval(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
-                if (ui.readyToBreak()) {break;}
+                System.out.println(SET_TEXT_COLOR_BLUE + result);
+                ClientUI newUI = switchUI(ui);
+                if (!newUI.equals(ui)) {
+                    System.out.println();
+                    System.out.println(newUI.firstLine());
+                    System.out.print(newUI.help());
+                }
+                ui = newUI;
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -49,5 +48,19 @@ public class Repl {
 
     private void printPrompt() {
         System.out.print("\n" + SET_TEXT_COLOR_GREEN + ">>> ");
+    }
+
+    private ClientUI switchUI (ClientUI currentUI) {
+        if (currentUI.getAuthToken() == null) {
+            return preLogin;
+        } else if (currentUI.getAuthToken() != null &&
+                currentUI.getGameData() == null) {
+            postLogin.setAuthToken(currentUI.getAuthToken());
+            return postLogin;
+        } else {
+            inGame.setAuthToken(currentUI.getAuthToken());
+            inGame.setGameData(currentUI.getGameData());
+            return inGame;
+        }
     }
 }

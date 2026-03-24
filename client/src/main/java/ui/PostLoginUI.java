@@ -9,6 +9,7 @@ import server.requestandresult.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Objects;
 
 import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
@@ -19,8 +20,8 @@ public class PostLoginUI implements ClientUI {
 
     private final ServerFacade facade;
     public String authToken = null;
-    private final HashMap<Integer, GameData> listedGames = new HashMap<>();
     GameData gameData = null;
+    private final HashMap<Integer, GameData> listedGames = new HashMap<>();
     public ChessGame.TeamColor color = WHITE;
 
     PostLoginUI(int port) {
@@ -72,6 +73,7 @@ public class PostLoginUI implements ClientUI {
             listedGames.put(counter, game);
             counter++;
         }
+        sb.deleteCharAt(sb.length()-1);
         return sb.toString();
     }
 
@@ -84,7 +86,7 @@ public class PostLoginUI implements ClientUI {
             facade.joinGame(joinGameRequest, authToken);
             gameData = listedGames.get(counter);
             if (params[1].equalsIgnoreCase("black")){color = BLACK;}
-            return String.format("You are playing game: %s", gameData.gameName());
+            return String.format("You are playing %s", gameData.gameName());
         }
         throw new DataAccessException("Expected: <ID> [WHITE|BLACK]");
     }
@@ -94,7 +96,7 @@ public class PostLoginUI implements ClientUI {
             if (listedGames.isEmpty()) {throw new DataAccessException("List games to see available IDs");}
             int counter = Integer.parseInt(params[0]);
             gameData = listedGames.get(counter);
-            return String.format("You are observing game: %s", gameData.gameName());
+            return String.format("You are observing %s", gameData.gameName());
         }
         throw new DataAccessException("Expected: <ID>");
     }
@@ -136,5 +138,28 @@ public class PostLoginUI implements ClientUI {
 
     public ChessGame.TeamColor getColor() {
         return color;
+    }
+
+    public String getAuthToken() {
+        return this.authToken;
+    }
+
+    @Override
+    public GameData getGameData() {
+        return this.gameData;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PostLoginUI that = (PostLoginUI) o;
+        return Objects.equals(facade, that.facade) && Objects.equals(authToken, that.authToken) && Objects.equals(gameData, that.gameData) && Objects.equals(listedGames, that.listedGames) && color == that.color;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(facade, authToken, gameData, listedGames, color);
     }
 }
