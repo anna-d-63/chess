@@ -40,7 +40,7 @@ public class PostLoginUI implements ClientUI {
                 case "join" -> joinAGame(params);
                 case "observe" -> observeAGame(params);
                 case "logout" -> logoutClient();
-                case "quit" -> "quit";
+                case "quit" -> quitAndLogout();
                 default -> help();
             };
         } catch (Exception e) {
@@ -106,6 +106,12 @@ public class PostLoginUI implements ClientUI {
         facade.logout(logoutRequest, authToken);
         authToken = null;
         return "Logged out";
+    }
+
+    private String quitAndLogout () throws DataAccessException {
+        logoutClient();
+        authToken = "placeholder";
+        return "quit";
     }
 
     @Override

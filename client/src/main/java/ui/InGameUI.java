@@ -4,6 +4,7 @@ import chess.ChessGame;
 import client.ServerFacade;
 import dataaccess.DataAccessException;
 import model.GameData;
+import server.requestandresult.LogoutRequest;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -31,7 +32,7 @@ public class InGameUI implements ClientUI {
             return switch(cmd) {
                 case "redraw" -> redrawBoard();
                 case "menu" -> backToGameMenu();
-                case "quit" -> "quit";
+                case "quit" -> quitAndLogout();
                 default -> help();
             };
         } catch (Exception e) {
@@ -46,6 +47,12 @@ public class InGameUI implements ClientUI {
     private String backToGameMenu() {
         gameData = null;
         return "";
+    }
+
+    private String quitAndLogout() throws DataAccessException {
+        var logoutRequest = new LogoutRequest(authToken);
+        facade.logout(logoutRequest, authToken);
+        return "quit";
     }
 
     @Override

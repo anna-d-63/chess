@@ -65,8 +65,6 @@ public class Repl {
         }
     }
 
-    //TODO: basics of inGame ui, draw chess board
     //TODO: make sure edge cases work
     //TODO: finish unit tests
-    //TODO: when you quit, log you out.
 }
