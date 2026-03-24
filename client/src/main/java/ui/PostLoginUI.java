@@ -80,7 +80,7 @@ public class PostLoginUI implements ClientUI {
             if (listedGames.isEmpty()) {throw new DataAccessException("List games to see available IDs");}
             int counter = Integer.parseInt(params[0]);
             int gameID = listedGames.get(counter).gameID();
-            var joinGameRequest = new JoinGameRequest(authToken, params[1], gameID);
+            var joinGameRequest = new JoinGameRequest(authToken, params[1].toUpperCase(), gameID);
             facade.joinGame(joinGameRequest, authToken);
             gameData = listedGames.get(counter);
             if (params[1].equalsIgnoreCase("black")){color = BLACK;}
