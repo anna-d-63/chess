@@ -13,16 +13,16 @@ import java.util.Objects;
 
 import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
-import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
-import static ui.EscapeSequences.SET_TEXT_COLOR_MAGENTA;
+import static ui.EscapeSequences.*;
+import static ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
 
 public class PostLoginUI implements ClientUI {
 
     private final ServerFacade facade;
     public String authToken = null;
     GameData gameData = null;
-    private final HashMap<Integer, GameData> listedGames = new HashMap<>();
     public ChessGame.TeamColor color = WHITE;
+    private final HashMap<Integer, GameData> listedGames = new HashMap<>();
 
     PostLoginUI(int port) {
         facade = new ServerFacade(port);
@@ -110,26 +110,26 @@ public class PostLoginUI implements ClientUI {
 
     @Override
     public String firstLine() {
+        gameData = null;
         return SET_TEXT_COLOR_MAGENTA + "Execute any of the following commands for chess play";
     }
 
     @Override
     public String help() {
-        return SET_TEXT_COLOR_BLUE +
-                """
-                create <NAME> - create a game
-                list - list all games
-                join <ID> [WHITE|BLACK] - join a game with specified ID as specified team color
-                observe <ID> - observe a game with specified ID
-                logout - logout when done
-                quit - leave the application
-                help - view this menu again
-                """;
-    }
-
-    @Override
-    public boolean readyToBreak() {
-        return gameData != null;
+        return SET_TEXT_COLOR_BLUE + "create <NAME> " +
+                SET_TEXT_COLOR_LIGHT_GREY + "- create a game \n" +
+                SET_TEXT_COLOR_BLUE + "list " +
+                SET_TEXT_COLOR_LIGHT_GREY + "- list all games \n" +
+                SET_TEXT_COLOR_BLUE + "join <ID> [WHITE|BLACK] " +
+                SET_TEXT_COLOR_LIGHT_GREY + "- join a game with specified ID as specified team color \n" +
+                SET_TEXT_COLOR_BLUE + "observe <ID> " +
+                SET_TEXT_COLOR_LIGHT_GREY + "- observe a game with specified ID \n" +
+                SET_TEXT_COLOR_BLUE + "logout " +
+                SET_TEXT_COLOR_LIGHT_GREY + "- logout when done \n" +
+                SET_TEXT_COLOR_BLUE + "quit " +
+                SET_TEXT_COLOR_LIGHT_GREY + "- leave the application \n" +
+                SET_TEXT_COLOR_BLUE + "help " +
+                SET_TEXT_COLOR_LIGHT_GREY + "- view this menu again \n";
     }
 
     public void setAuthToken(String authToken) {

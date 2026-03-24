@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import client.ServerFacade;
 import dataaccess.DataAccessException;
 import model.GameData;
@@ -42,6 +43,7 @@ public class PreLoginUI implements ClientUI {
 
     @Override
     public String firstLine() {
+        authToken = null;
         return SET_TEXT_COLOR_MAGENTA + BLACK_KING +
                 "Welcome to Chess. Type a command below to get started."
                 + BLACK_QUEEN;
@@ -49,12 +51,14 @@ public class PreLoginUI implements ClientUI {
 
     @Override
     public String help() {
-        return SET_TEXT_COLOR_BLUE + """
-                register <USERNAME> <PASSWORD> <EMAIL> - create an account
-                login <USERNAME> <PASSWORD> - play chess
-                quit - leave the application
-                help - view this menu again
-                """;
+        return SET_TEXT_COLOR_BLUE + "register <USERNAME> <PASSWORD> <EMAIL> " +
+                SET_TEXT_COLOR_LIGHT_GREY + "- create an account \n" +
+                SET_TEXT_COLOR_BLUE + "login <USERNAME> <PASSWORD> " +
+                SET_TEXT_COLOR_LIGHT_GREY + "- play chess \n" +
+                SET_TEXT_COLOR_BLUE + "quit " +
+                SET_TEXT_COLOR_LIGHT_GREY + "- leave the application \n" +
+                SET_TEXT_COLOR_BLUE + "help " +
+                SET_TEXT_COLOR_LIGHT_GREY + "- view this menu again \n";
     }
 
     private String registerClient(String[] params) throws DataAccessException {
@@ -77,11 +81,6 @@ public class PreLoginUI implements ClientUI {
         throw new DataAccessException("Expected: <USERNAME> <PASSWORD>");
     }
 
-    @Override
-    public boolean readyToBreak() {
-        return authToken != null;
-    }
-
     public String getAuthToken() {
         return this.authToken;
     }
@@ -89,6 +88,10 @@ public class PreLoginUI implements ClientUI {
     @Override
     public GameData getGameData() {
         return this.gameData;
+    }
+
+    public ChessGame.TeamColor getColor() {
+        return null;
     }
 
     @Override

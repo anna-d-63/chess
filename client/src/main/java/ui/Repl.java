@@ -30,7 +30,7 @@ public class Repl {
             String line = scanner.nextLine();
             try {
                 result = ui.eval(line);
-                System.out.println(SET_TEXT_COLOR_BLUE + result);
+                System.out.println(SET_TEXT_COLOR_LIGHT_GREY + result);
                 ClientUI newUI = switchUI(ui);
                 if (!newUI.equals(ui)) {
                     System.out.println();
@@ -60,7 +60,13 @@ public class Repl {
         } else {
             inGame.setAuthToken(currentUI.getAuthToken());
             inGame.setGameData(currentUI.getGameData());
+            inGame.setColor(currentUI.getColor());
             return inGame;
         }
     }
+
+    //TODO: basics of inGame ui, draw chess board
+    //TODO: make sure edge cases work
+    //TODO: finish unit tests
+    //TODO: when you quit, log you out.
 }
