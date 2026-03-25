@@ -1,6 +1,6 @@
 package client;
 
-import dataaccess.DataAccessException;
+import Exceptions.DataAccessException;
 import server.requestandresult.*;
 
 public class ServerFacade {

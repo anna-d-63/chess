@@ -3,7 +3,7 @@ package client;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import dataaccess.DataAccessException;
+import Exceptions.DataAccessException;
 
 import java.net.URI;
 import java.net.http.HttpClient;

@@ -1,5 +1,6 @@
 package service;
 
+import Exceptions.DataAccessException;
 import dataaccess.*;
 import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.UnauthorizedResponse;

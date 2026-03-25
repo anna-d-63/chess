@@ -1,8 +1,8 @@
 package dataaccess;
 
+import Exceptions.DataAccessException;
 import model.GameData;
 
-import javax.xml.crypto.Data;
 import java.util.Collection;
 
 public interface GameDAO {

@@ -1,7 +1,7 @@
 package services;
 
 import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
+import Exceptions.DataAccessException;
 import dataaccess.GameDAO;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.ForbiddenResponse;
