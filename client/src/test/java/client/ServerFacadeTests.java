@@ -58,13 +58,13 @@ public class ServerFacadeTests {
         assertNotNull(result.authToken());
 
         var logoutRequest = new LogoutRequest(result.authToken());
-        facade.logout(logoutRequest, result.authToken());
+        facade.logout(logoutRequest);
     }
 
     @Test
     public void badLogout() {
         var logoutRequest = new LogoutRequest("badAuth");
-        assertThrows(DataAccessException.class, ()->facade.logout(logoutRequest, "badAuth"));
+        assertThrows(DataAccessException.class, ()->facade.logout(logoutRequest));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class ServerFacadeTests {
         RegisterResult registerResult = facade.register(registerRequest);
 
         var logoutRequest = new LogoutRequest(registerResult.authToken());
-        facade.logout(logoutRequest, registerResult.authToken());
+        facade.logout(logoutRequest);
 
         var loginRequest = new LoginRequest("Anna", "pwd");
         LoginResult loginResult = facade.login(loginRequest);
@@ -94,7 +94,7 @@ public class ServerFacadeTests {
         RegisterResult registerResult = facade.register(registerRequest);
 
         var createGameRequest = new CreateGameRequest(registerResult.authToken(), "game1");
-        CreateGameResult createGameResult = facade.createGame(createGameRequest, registerResult.authToken());
+        CreateGameResult createGameResult = facade.createGame(createGameRequest);
 
         assertNotNull(createGameResult.gameID());
     }
@@ -105,7 +105,7 @@ public class ServerFacadeTests {
         RegisterResult registerResult = facade.register(registerRequest);
 
         var badCreateReq = new CreateGameRequest("badAuth", "game1");
-        assertThrows(DataAccessException.class, ()-> facade.createGame(badCreateReq, "badAuth"));
+        assertThrows(DataAccessException.class, ()-> facade.createGame(badCreateReq));
     }
 
     @Test
@@ -114,11 +114,11 @@ public class ServerFacadeTests {
         RegisterResult registerResult = facade.register(registerRequest);
 
         var createGameRequest = new CreateGameRequest(registerResult.authToken(), "game1");
-        CreateGameResult createGameResult = facade.createGame(createGameRequest, registerResult.authToken());
+        CreateGameResult createGameResult = facade.createGame(createGameRequest);
 
         var joinGameRequest = new JoinGameRequest(
                 registerResult.authToken(), "WHITE", createGameResult.gameID());
-        facade.joinGame(joinGameRequest, registerResult.authToken());
+        facade.joinGame(joinGameRequest);
 
         assertNotNull(createGameResult);
         assertNotNull(registerResult);
@@ -131,7 +131,7 @@ public class ServerFacadeTests {
 
         var joinGameRequest = new JoinGameRequest(
                 registerResult.authToken(), "WHITE", 2);
-        assertThrows(DataAccessException.class, ()-> facade.joinGame(joinGameRequest, registerResult.authToken()));
+        assertThrows(DataAccessException.class, ()-> facade.joinGame(joinGameRequest));
     }
 
     @Test
@@ -141,16 +141,16 @@ public class ServerFacadeTests {
         var authToken = registerResult.authToken();
 
         var createGameRequest1 = new CreateGameRequest(authToken, "game1");
-        facade.createGame(createGameRequest1, authToken);
+        facade.createGame(createGameRequest1);
 
         var createGameRequest2 = new CreateGameRequest(authToken, "game2");
-        facade.createGame(createGameRequest2, authToken);
+        facade.createGame(createGameRequest2);
 
         var createGameRequest3 = new CreateGameRequest(authToken, "game3");
-        facade.createGame(createGameRequest3, authToken);
+        facade.createGame(createGameRequest3);
 
         var listGamesRequest = new ListGamesRequest(authToken);
-        ListGamesResult listGamesResult = facade.listGames(listGamesRequest, authToken);
+        ListGamesResult listGamesResult = facade.listGames(listGamesRequest);
 
         assertNotNull(listGamesResult.games());
     }
@@ -162,10 +162,10 @@ public class ServerFacadeTests {
         var authToken = registerResult.authToken();
 
         var createGameRequest1 = new CreateGameRequest(authToken, "game1");
-        facade.createGame(createGameRequest1, authToken);
+        facade.createGame(createGameRequest1);
 
         var badListReq = new ListGamesRequest("badAuth");
-        assertThrows(DataAccessException.class, ()-> facade.listGames(badListReq, "badAuth"));
+        assertThrows(DataAccessException.class, ()-> facade.listGames(badListReq));
     }
 
     @Test
@@ -175,7 +175,7 @@ public class ServerFacadeTests {
         var authToken = registerResult.authToken();
 
         var createGameRequest1 = new CreateGameRequest(authToken, "game1");
-        facade.createGame(createGameRequest1, authToken);
+        facade.createGame(createGameRequest1);
 
         facade.clear();
 

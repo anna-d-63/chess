@@ -51,7 +51,7 @@ public class InGameUI implements ClientUI {
 
     private String quitAndLogout() throws DataAccessException {
         var logoutRequest = new LogoutRequest(authToken);
-        facade.logout(logoutRequest, authToken);
+        facade.logout(logoutRequest);
         return "quit";
     }
 

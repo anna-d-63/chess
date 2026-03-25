@@ -52,7 +52,7 @@ public class PostLoginUI implements ClientUI {
         if (params.length >= 1) {
             var gameName = String.join("-", params);
             var createGameRequest = new CreateGameRequest(authToken, gameName);
-            facade.createGame(createGameRequest, authToken);
+            facade.createGame(createGameRequest);
             return String.format("You created a game named %s", gameName);
         }
         throw new DataAccessException("Expected: <NAME>");
@@ -60,7 +60,7 @@ public class PostLoginUI implements ClientUI {
 
     private String listAllGames() throws DataAccessException {
         var listGamesRequest = new ListGamesRequest(authToken);
-        ListGamesResult listGamesResult = facade.listGames(listGamesRequest, authToken);
+        ListGamesResult listGamesResult = facade.listGames(listGamesRequest);
         Collection<GameData> games = listGamesResult.games();
         StringBuilder sb = new StringBuilder();
         int counter = 1;
@@ -83,7 +83,7 @@ public class PostLoginUI implements ClientUI {
             int counter = Integer.parseInt(params[0]);
             int gameID = listedGames.get(counter).gameID();
             var joinGameRequest = new JoinGameRequest(authToken, params[1].toUpperCase(), gameID);
-            facade.joinGame(joinGameRequest, authToken);
+            facade.joinGame(joinGameRequest);
             gameData = listedGames.get(counter);
             if (params[1].equalsIgnoreCase("black")){color = BLACK;}
             return String.format("You are playing %s", gameData.gameName());
@@ -103,7 +103,7 @@ public class PostLoginUI implements ClientUI {
 
     private String logoutClient() throws DataAccessException {
         var logoutRequest = new LogoutRequest(authToken);
-        facade.logout(logoutRequest, authToken);
+        facade.logout(logoutRequest);
         authToken = null;
         return "Logged out";
     }

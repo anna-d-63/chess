@@ -23,26 +23,26 @@ public class ServerFacade {
         return communicator.handleResponse(response, LoginResult.class);
     }
 
-    public void logout(LogoutRequest logoutRequest, String authToken) throws DataAccessException {
-        var req = communicator.buildRequest("DELETE", "/session", logoutRequest, authToken);
+    public void logout(LogoutRequest logoutRequest) throws DataAccessException {
+        var req = communicator.buildRequest("DELETE", "/session", logoutRequest, logoutRequest.authToken());
         var response = communicator.sendRequest(req);
         communicator.handleResponse(response, null);
     }
 
-    public CreateGameResult createGame(CreateGameRequest request, String authToken) throws DataAccessException {
-        var req = communicator.buildRequest("POST", "/game", request, authToken);
+    public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException {
+        var req = communicator.buildRequest("POST", "/game", request, request.authToken());
         var response = communicator.sendRequest(req);
         return communicator.handleResponse(response, CreateGameResult.class);
     }
 
-    public void joinGame(JoinGameRequest joinGameRequest, String authToken) throws DataAccessException {
-        var req = communicator.buildRequest("PUT", "/game", joinGameRequest, authToken);
+    public void joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
+        var req = communicator.buildRequest("PUT", "/game", joinGameRequest, joinGameRequest.authToken());
         var response = communicator.sendRequest(req);
         communicator.handleResponse(response, null);
     }
 
-    public ListGamesResult listGames(ListGamesRequest listGamesRequest, String authToken) throws DataAccessException {
-        var req = communicator.buildRequest("GET", "/game", listGamesRequest, authToken);
+    public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws DataAccessException {
+        var req = communicator.buildRequest("GET", "/game", listGamesRequest, listGamesRequest.authToken());
         var response = communicator.sendRequest(req);
         return communicator.handleResponse(response, ListGamesResult.class);
     }
