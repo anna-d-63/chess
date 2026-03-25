@@ -1,6 +1,6 @@
 package ui;
 
-import Exceptions.DataAccessException;
+import exceptions.DataAccessException;
 
 import java.util.Scanner;
 import static ui.EscapeSequences.*;

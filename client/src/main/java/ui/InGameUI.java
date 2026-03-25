@@ -2,7 +2,7 @@ package ui;
 
 import chess.ChessGame;
 import client.ServerFacade;
-import Exceptions.DataAccessException;
+import exceptions.DataAccessException;
 import model.GameData;
 import requestandresult.LogoutRequest;
 
@@ -110,7 +110,8 @@ public class InGameUI implements ClientUI {
             return false;
         }
         InGameUI inGameUI = (InGameUI) o;
-        return Objects.equals(facade, inGameUI.facade) && Objects.equals(authToken, inGameUI.authToken) && Objects.equals(gameData, inGameUI.gameData);
+        return Objects.equals(facade, inGameUI.facade) && Objects.equals(authToken, inGameUI.authToken)
+                && Objects.equals(gameData, inGameUI.gameData);
     }
 
     @Override

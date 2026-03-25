@@ -1,6 +1,6 @@
 package client;
 
-import Exceptions.DataAccessException;
+import exceptions.DataAccessException;
 import org.junit.jupiter.api.*;
 import requestandresult.*;
 import server.Server;

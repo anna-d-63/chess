@@ -2,7 +2,7 @@ package ui;
 
 import chess.ChessGame;
 import client.ServerFacade;
-import Exceptions.DataAccessException;
+import exceptions.DataAccessException;
 import model.GameData;
 import requestandresult.LoginRequest;
 import requestandresult.LoginResult;

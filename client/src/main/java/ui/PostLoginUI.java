@@ -2,7 +2,7 @@ package ui;
 
 import chess.ChessGame;
 import client.ServerFacade;
-import Exceptions.DataAccessException;
+import exceptions.DataAccessException;
 import model.GameData;
 import requestandresult.*;
 
@@ -179,7 +179,9 @@ public class PostLoginUI implements ClientUI {
             return false;
         }
         PostLoginUI that = (PostLoginUI) o;
-        return Objects.equals(facade, that.facade) && Objects.equals(authToken, that.authToken) && Objects.equals(gameData, that.gameData) && Objects.equals(listedGames, that.listedGames) && color == that.color;
+        return Objects.equals(facade, that.facade) && Objects.equals(authToken, that.authToken)
+                && Objects.equals(gameData, that.gameData)
+                && Objects.equals(listedGames, that.listedGames) && color == that.color;
     }
 
     @Override
