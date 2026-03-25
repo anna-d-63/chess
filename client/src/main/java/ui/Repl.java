@@ -65,6 +65,4 @@ public class Repl {
         }
     }
 
-    //TODO: make sure edge cases work
-    //TODO: try two step menu
 }
