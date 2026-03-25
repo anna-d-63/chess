@@ -66,5 +66,5 @@ public class Repl {
     }
 
     //TODO: make sure edge cases work
-    //TODO: finish unit tests
+    //TODO: try two step menu
 }

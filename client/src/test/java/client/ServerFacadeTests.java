@@ -5,8 +5,7 @@ import org.junit.jupiter.api.*;
 import server.Server;
 import server.requestandresult.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
@@ -44,6 +43,12 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void badRegister() {
+        var badRequest = new RegisterRequest("Anna", "password", null);
+        assertThrows(DataAccessException.class, ()->facade.register(badRequest));
+    }
+
+    @Test
     public void logout() throws DataAccessException {
         var request = new RegisterRequest("Anna", "password", "anna@email.com");
         RegisterResult result = facade.register(request);
@@ -54,6 +59,12 @@ public class ServerFacadeTests {
 
         var logoutRequest = new LogoutRequest(result.authToken());
         facade.logout(logoutRequest, result.authToken());
+    }
+
+    @Test
+    public void badLogout() {
+        var logoutRequest = new LogoutRequest("badAuth");
+        assertThrows(DataAccessException.class, ()->facade.logout(logoutRequest, "badAuth"));
     }
 
     @Test
@@ -72,6 +83,12 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void badLogin() {
+        var badLoginReq = new LoginRequest("anna", "password");
+        assertThrows(DataAccessException.class, ()-> facade.login(badLoginReq));
+    }
+
+    @Test
     public void createGame() throws DataAccessException {
         var registerRequest = new RegisterRequest("Anna", "pwd", "anna@email.com");
         RegisterResult registerResult = facade.register(registerRequest);
@@ -80,6 +97,15 @@ public class ServerFacadeTests {
         CreateGameResult createGameResult = facade.createGame(createGameRequest, registerResult.authToken());
 
         assertNotNull(createGameResult.gameID());
+    }
+
+    @Test
+    public void badCreate() throws DataAccessException {
+        var registerRequest = new RegisterRequest("Anna", "pwd", "anna@email.com");
+        RegisterResult registerResult = facade.register(registerRequest);
+
+        var badCreateReq = new CreateGameRequest("badAuth", "game1");
+        assertThrows(DataAccessException.class, ()-> facade.createGame(badCreateReq, "badAuth"));
     }
 
     @Test
@@ -93,6 +119,19 @@ public class ServerFacadeTests {
         var joinGameRequest = new JoinGameRequest(
                 registerResult.authToken(), "WHITE", createGameResult.gameID());
         facade.joinGame(joinGameRequest, registerResult.authToken());
+
+        assertNotNull(createGameResult);
+        assertNotNull(registerResult);
+    }
+
+    @Test
+    public void badJoin() throws DataAccessException {
+        var registerRequest = new RegisterRequest("Anna", "pwd", "anna@email.com");
+        RegisterResult registerResult = facade.register(registerRequest);
+
+        var joinGameRequest = new JoinGameRequest(
+                registerResult.authToken(), "WHITE", 2);
+        assertThrows(DataAccessException.class, ()-> facade.joinGame(joinGameRequest, registerResult.authToken()));
     }
 
     @Test
@@ -113,6 +152,33 @@ public class ServerFacadeTests {
         var listGamesRequest = new ListGamesRequest(authToken);
         ListGamesResult listGamesResult = facade.listGames(listGamesRequest, authToken);
 
-        assertNotNull(listGamesResult);
+        assertNotNull(listGamesResult.games());
+    }
+
+    @Test
+    public void badList() throws DataAccessException {
+        var registerRequest = new RegisterRequest("Anna", "pwd", "anna@email.com");
+        RegisterResult registerResult = facade.register(registerRequest);
+        var authToken = registerResult.authToken();
+
+        var createGameRequest1 = new CreateGameRequest(authToken, "game1");
+        facade.createGame(createGameRequest1, authToken);
+
+        var badListReq = new ListGamesRequest("badAuth");
+        assertThrows(DataAccessException.class, ()-> facade.listGames(badListReq, "badAuth"));
+    }
+
+    @Test
+    public void clear() throws DataAccessException {
+        var registerRequest = new RegisterRequest("Anna", "pwd", "anna@email.com");
+        RegisterResult registerResult = facade.register(registerRequest);
+        var authToken = registerResult.authToken();
+
+        var createGameRequest1 = new CreateGameRequest(authToken, "game1");
+        facade.createGame(createGameRequest1, authToken);
+
+        facade.clear();
+
+        assertNotNull(registerResult);
     }
 }
