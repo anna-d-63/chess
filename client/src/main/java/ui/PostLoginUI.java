@@ -80,7 +80,16 @@ public class PostLoginUI implements ClientUI {
     private String joinAGame(String[] params) throws DataAccessException {
         if (params.length == 2) {
             if (listedGames.isEmpty()) {throw new DataAccessException("List games to see available IDs");}
-            int counter = Integer.parseInt(params[0]);
+            int counter;
+            try {
+                counter = Integer.parseInt(params[0]);
+            } catch (NumberFormatException e) {
+                throw new DataAccessException("Enter the listed number of the game you want to join \n" +
+                        "type 'list' to see available games");
+            }
+            if (!listedGames.containsKey(counter)) {
+                throw new DataAccessException("You must join a game in the list");
+            }
             int gameID = listedGames.get(counter).gameID();
             var joinGameRequest = new JoinGameRequest(authToken, params[1].toUpperCase(), gameID);
             facade.joinGame(joinGameRequest);
@@ -94,7 +103,16 @@ public class PostLoginUI implements ClientUI {
     private String observeAGame(String[] params) throws DataAccessException {
         if (params.length == 1) {
             if (listedGames.isEmpty()) {throw new DataAccessException("List games to see available IDs");}
-            int counter = Integer.parseInt(params[0]);
+            int counter;
+            try {
+                counter = Integer.parseInt(params[0]);
+            } catch (NumberFormatException e) {
+                throw new DataAccessException("Enter the listed number of the game you want to observe \n" +
+                        "type 'list' to see available games");
+            }
+            if (!listedGames.containsKey(counter)) {
+                throw new DataAccessException("You must join a game in the list");
+            }
             gameData = listedGames.get(counter);
             return String.format("You are observing %s", gameData.gameName());
         }
