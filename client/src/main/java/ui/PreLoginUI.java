@@ -4,10 +4,10 @@ import chess.ChessGame;
 import client.ServerFacade;
 import Exceptions.DataAccessException;
 import model.GameData;
-import server.requestandresult.LoginRequest;
-import server.requestandresult.LoginResult;
-import server.requestandresult.RegisterRequest;
-import server.requestandresult.RegisterResult;
+import requestandresult.LoginRequest;
+import requestandresult.LoginResult;
+import requestandresult.RegisterRequest;
+import requestandresult.RegisterResult;
 
 import java.util.Arrays;
 import java.util.Objects;

@@ -4,7 +4,7 @@ import chess.ChessGame;
 import client.ServerFacade;
 import Exceptions.DataAccessException;
 import model.GameData;
-import server.requestandresult.LogoutRequest;
+import requestandresult.LogoutRequest;
 
 import java.util.Arrays;
 import java.util.Objects;

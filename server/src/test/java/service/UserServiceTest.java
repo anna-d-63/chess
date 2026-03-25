@@ -6,7 +6,7 @@ import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.UnauthorizedResponse;
 import model.UserData;
 import org.junit.jupiter.api.*;
-import server.requestandresult.*;
+import requestandresult.*;
 import services.UserService;
 
 import static org.junit.jupiter.api.Assertions.*;

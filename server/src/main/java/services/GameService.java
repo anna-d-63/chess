@@ -8,7 +8,7 @@ import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.UnauthorizedResponse;
 import model.AuthData;
 import model.GameData;
-import server.requestandresult.*;
+import requestandresult.*;
 
 import java.util.Collection;
 

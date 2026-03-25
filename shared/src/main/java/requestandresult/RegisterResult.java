@@ -1,4 +1,4 @@
-package server.requestandresult;
+package requestandresult;
 
 public record RegisterResult(
         String username,

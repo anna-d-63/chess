@@ -7,7 +7,7 @@ import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.UnauthorizedResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.requestandresult.*;
+import requestandresult.*;
 import services.GameService;
 
 import static org.junit.jupiter.api.Assertions.*;

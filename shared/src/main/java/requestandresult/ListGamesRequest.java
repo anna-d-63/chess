@@ -1,9 +1,8 @@
-package server.requestandresult;
+package requestandresult;
 
-public record LogoutRequest(
+public record ListGamesRequest(
         String authToken
-) implements ParentRequest{
-
+) implements ParentRequest {
     @Override
     public boolean hasNullFields(){
         return authToken == null;

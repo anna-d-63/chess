@@ -9,7 +9,7 @@ import io.javalin.http.UnauthorizedResponse;
 import model.AuthData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-import server.requestandresult.*;
+import requestandresult.*;
 
 import java.util.UUID;
 

@@ -9,7 +9,7 @@ import io.javalin.Javalin;
 import io.javalin.http.*;
 import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
-import server.requestandresult.*;
+import requestandresult.*;
 import services.ClearService;
 import services.GameService;
 import services.UserService;
