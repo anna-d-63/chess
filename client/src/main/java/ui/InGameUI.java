@@ -64,7 +64,7 @@ public class InGameUI implements ClientUI {
             chessGame.setTeamTurn(ChessGame.TeamColor.WHITE);
         }
         DrawnChessBoard drawBoard = new DrawnChessBoard(chessGame);
-        drawBoard.createBoard();
+        drawBoard.createBoard(null);
         return RESET_BG_COLOR;
     }
 
@@ -77,7 +77,24 @@ public class InGameUI implements ClientUI {
                 SET_TEXT_COLOR_BLUE + "quit " +
                 SET_TEXT_COLOR_LIGHT_GREY + "- leave the application \n" +
                 SET_TEXT_COLOR_BLUE + "help " +
-                SET_TEXT_COLOR_LIGHT_GREY + "- view this menu again \n";
+                SET_TEXT_COLOR_LIGHT_GREY + "- view this menu again \n" +
+                SET_TEXT_COLOR_BLUE + "highlight " +
+                SET_TEXT_COLOR_LIGHT_GREY + "- select a square and see that piece's legal moves";
+        /*
+        help - help text
+        redraw chess board
+        leave - Removes the user from the game (whether they are playing or observing the game).
+            The client transitions back to the Post-Login UI.
+        Make move - Allow the user to input what move they want to make.
+                The board is updated to reflect the result of the move,
+                and the board automatically updates on all clients involved in the game.
+        Resign - Prompts the user to confirm they want to resign.
+                If they do, the user forfeits the game and the game is over.
+                Does not cause the user to leave the game.
+        Highlight legal moves - Allows the user to input the piece for which they want to highlight legal moves.
+                                The selected piece’s current square and all squares it can legally move to are highlighted.
+                                This is a local operation and has no effect on remote users’ screens.
+         */
     }
 
 

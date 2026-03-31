@@ -1,13 +1,14 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
+import static chess.ChessGame.TeamColor.BLACK;
 import static ui.EscapeSequences.*;
 
 public class DrawnChessBoard {
@@ -43,26 +44,27 @@ public class DrawnChessBoard {
 
     public static void main(String[] args) {
         ChessGame game1 = new ChessGame();
-        game1.setTeamTurn(ChessGame.TeamColor.BLACK);
+        game1.setTeamTurn(BLACK);
         DrawnChessBoard drawIt = new DrawnChessBoard(game1);
 
-        drawIt.createBoard();
+        Collection<ChessMove> moves = game1.validMoves(new ChessPosition(7, 2));
+        drawIt.createBoard(moves);
     }
 
-    public void createBoard() {
+    public void createBoard(Collection<ChessMove> legalMoves) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
 
         drawHeader(out);
-        drawBulkBoard(out);
+        drawBulkBoard(out, legalMoves);
         drawHeader(out);
     }
 
     private void drawHeader(PrintStream out) {
         setGrey(out);
         out.print(EMPTY);
-        if (teamColor == ChessGame.TeamColor.BLACK) {
+        if (teamColor == BLACK) {
             for (int letter = 7; letter >= 0; letter--) {
                 out.print(columnHeaders[letter]);
             }
@@ -76,23 +78,47 @@ public class DrawnChessBoard {
         out.println();
     }
 
-    private void drawBulkBoard(PrintStream out) {
+    private void drawBulkBoard(PrintStream out, Collection<ChessMove> legalMoves) {
+        ChessPosition startPosition = null;
+        Collection<ChessPosition> endPositions = List.of();
+        if (legalMoves != null && !legalMoves.isEmpty()) {
+            startPosition = legalMoves.iterator().next().getStartPosition();
+            endPositions = new ArrayList<>();
+            for (ChessMove move : legalMoves) {
+                endPositions.add(move.getEndPosition());
+            }
+        }
+
             for (int i = 0; i < 8; i++) {
                 setGrey(out);
-                if(teamColor == ChessGame.TeamColor.BLACK) {out.print(rowHeaders[i]);}
+                if(teamColor == BLACK) {out.print(rowHeaders[i]);}
                 else {out.print(rowHeaders[7-i]);}
 
                 for (int j = 0; j < 8; j++) {
-                    if (j % 2 == 0 && i % 2 == 0 ||
-                            j % 2 == 1 && i % 2 == 1) {
+                    boolean even = (j % 2 == 0 && i % 2 == 0 || j % 2 == 1 && i % 2 == 1);
+
+                    if (even) {
                         out.print(SET_BG_COLOR_TAN);
                     } else {
                         out.print(SET_BG_COLOR_BROWN);
                     }
+                    if (startPosition != null && !endPositions.isEmpty()){
+                        if (startHere(startPosition, i, 7-j)){
+                            out.print(SET_BG_COLOR_BLUE);
+                        } else if (potentialMove(endPositions, i, 7-j)) {
+                            if (even) {
+                                out.print(SET_BG_COLOR_GREEN);
+                            } else {
+                                out.print(SET_BG_COLOR_DARK_GREEN);
+                            }
+                        }
+                    }
+
+
                     printPiece(out, i, 7-j);
                 }
                 setGrey(out);
-                if(teamColor == ChessGame.TeamColor.BLACK) {out.print(rowHeaders[i]);}
+                if(teamColor == BLACK) {out.print(rowHeaders[i]);}
                 else {out.print(rowHeaders[7-i]);}
 
                 setBlack(out);
@@ -100,9 +126,41 @@ public class DrawnChessBoard {
             }
     }
 
+    private boolean startHere(ChessPosition startPosition, int i, int j){
+        int row = startPosition.getRow();
+        int col = startPosition.getColumn();
+        if (teamColor == BLACK){
+            if (i + 1 == row && j + 1 == col) {
+                return true;
+            }
+        } else {
+            if (8 - i == row && 8- j == col) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean potentialMove(Collection<ChessPosition> endPositions, int i, int j){
+        for (ChessPosition potentialSpace : endPositions) {
+            int row = potentialSpace.getRow();
+            int col = potentialSpace.getColumn();
+            if (teamColor == BLACK) {
+                if (i + 1 == row && j + 1 == col) {
+                    return true;
+                }
+            } else {
+                if (8 - i == row && 8 - j == col) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private void printPiece(PrintStream out, int i, int j) {
         ChessPiece piece;
-        if (teamColor == ChessGame.TeamColor.BLACK) {
+        if (teamColor == BLACK) {
             piece = board.getPiece(new ChessPosition(i + 1, j + 1));
         } else {
             piece = board.getPiece(new ChessPosition(8-i, 8-j));
