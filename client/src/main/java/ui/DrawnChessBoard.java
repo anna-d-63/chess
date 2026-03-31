@@ -45,7 +45,6 @@ public class DrawnChessBoard {
 
     public static void main(String[] args) {
         ChessGame game1 = new ChessGame();
-//        game1.setTeamTurn(BLACK);
         DrawnChessBoard drawIt = new DrawnChessBoard(game1, WHITE);
 
         Collection<ChessMove> moves = game1.validMoves(new ChessPosition(7, 2));
@@ -95,18 +94,17 @@ public class DrawnChessBoard {
                 if(perspective == BLACK) {out.print(rowHeaders[i]);}
                 else {out.print(rowHeaders[7-i]);}
 
-                for (int j = 0; j < 8; j++) {
+                for (int j = 7; j >= 0; j--) {
                     boolean even = (j % 2 == 0 && i % 2 == 0 || j % 2 == 1 && i % 2 == 1);
-
                     if (even) {
                         out.print(SET_BG_COLOR_TAN);
                     } else {
                         out.print(SET_BG_COLOR_BROWN);
                     }
                     if (startPosition != null && !endPositions.isEmpty()){
-                        if (startHere(startPosition, i, 7-j)){
+                        if (startHere(startPosition, i, j)){
                             out.print(SET_BG_COLOR_BLUE);
-                        } else if (potentialMove(endPositions, i, 7-j)) {
+                        } else if (potentialMove(endPositions, i, j)) {
                             if (even) {
                                 out.print(SET_BG_COLOR_GREEN);
                             } else {
@@ -116,7 +114,7 @@ public class DrawnChessBoard {
                     }
 
 
-                    printPiece(out, i, 7-j);
+                    printPiece(out, i, j);
                 }
                 setGrey(out);
                 if(perspective == BLACK) {out.print(rowHeaders[i]);}
@@ -131,15 +129,10 @@ public class DrawnChessBoard {
         int row = startPosition.getRow();
         int col = startPosition.getColumn();
         if (perspective == BLACK){
-            if (i + 1 == row && j + 1 == col) {
-                return true;
-            }
+            return i + 1 == row && j + 1 == col;
         } else {
-            if (8 - i == row && 8- j == col) {
-                return true;
-            }
+            return 8 - i == row && 8 - j == col;
         }
-        return false;
     }
 
     private boolean potentialMove(Collection<ChessPosition> endPositions, int i, int j){
