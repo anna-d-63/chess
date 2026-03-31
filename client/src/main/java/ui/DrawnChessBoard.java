@@ -95,7 +95,7 @@ public class DrawnChessBoard {
                 else {out.print(rowHeaders[7-i]);}
 
                 for (int j = 7; j >= 0; j--) {
-                    boolean even = (j % 2 == 0 && i % 2 == 0 || j % 2 == 1 && i % 2 == 1);
+                    boolean even = (j % 2 == 1 && i % 2 == 0 || j % 2 == 0 && i % 2 == 1);
                     if (even) {
                         out.print(SET_BG_COLOR_TAN);
                     } else {

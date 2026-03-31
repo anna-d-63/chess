@@ -33,7 +33,7 @@ public class InGameUI implements ClientUI {
             return switch(cmd) {
                 case "redraw" -> redrawBoard();
                 case "highlight" -> highlightMoves(params);
-                case "menu" -> backToGameMenu();
+                case "leave" -> backToGameMenu();
                 case "quit" -> quitAndLogout();
                 default -> help();
             };
