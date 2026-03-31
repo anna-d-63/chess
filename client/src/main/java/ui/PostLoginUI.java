@@ -62,7 +62,7 @@ public class PostLoginUI implements ClientUI {
         var listGamesRequest = new ListGamesRequest(authToken);
         ListGamesResult listGamesResult = facade.listGames(listGamesRequest);
         if (listGamesResult.games().isEmpty()) {
-            throw new DataAccessException("No games to list");
+            throw new DataAccessException("No games available to list");
         }
         Collection<GameData> games = listGamesResult.games();
         StringBuilder sb = new StringBuilder();

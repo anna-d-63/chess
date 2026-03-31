@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessPosition;
 import client.ServerFacade;
 import exceptions.DataAccessException;
 import model.GameData;
@@ -31,6 +32,7 @@ public class InGameUI implements ClientUI {
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch(cmd) {
                 case "redraw" -> redrawBoard();
+                case "highlight" -> highlightMoves(params);
                 case "menu" -> backToGameMenu();
                 case "quit" -> quitAndLogout();
                 default -> help();
@@ -42,6 +44,37 @@ public class InGameUI implements ClientUI {
 
     private String redrawBoard() {
         return firstLine();
+    }
+
+    private final Character[] cols = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+
+    private String highlightMoves(String[] params) throws DataAccessException {
+        if (params.length == 1) {
+            ChessPosition square = getSquare(params[0]);
+            ChessGame game = gameData.game();
+            DrawnChessBoard drawBoard = new DrawnChessBoard(game, color);
+            drawBoard.createBoard(game.validMoves(square));
+            return RESET_BG_COLOR;
+        }
+        throw new DataAccessException("<SQUARE> must be in the form a1");
+    }
+
+    private ChessPosition getSquare(String square) throws DataAccessException {
+        try {
+            char colChar = square.charAt(0);
+            char rowChar = square.charAt(1);
+
+            int col = Arrays.asList(cols).indexOf(colChar);
+            int row = Character.getNumericValue(rowChar);
+
+            if (col < 0 || col > 7 || row < 0 || row > 8) {
+                throw new Exception();
+            }
+
+            return new ChessPosition(row, col + 1);
+        } catch (Exception e) {
+            throw new DataAccessException("<SQUARE> must be in the form of a1");
+        }
     }
 
     private String backToGameMenu() {
@@ -58,12 +91,7 @@ public class InGameUI implements ClientUI {
     @Override
     public String firstLine() {
         ChessGame chessGame = gameData.game();
-        DrawnChessBoard drawBoard;
-        if (color == ChessGame.TeamColor.BLACK) {
-            drawBoard = new DrawnChessBoard(chessGame, color);
-        } else {
-            drawBoard = new DrawnChessBoard(chessGame, color);
-        }
+        DrawnChessBoard drawBoard = new DrawnChessBoard(chessGame, color);
         drawBoard.createBoard(null);
         return RESET_BG_COLOR;
     }
@@ -72,14 +100,14 @@ public class InGameUI implements ClientUI {
     public String help() {
         return SET_TEXT_COLOR_BLUE + "redraw " +
                 SET_TEXT_COLOR_LIGHT_GREY + "- redraw chessboard \n" +
+                SET_TEXT_COLOR_BLUE + "highlight <SQUARE>" +
+                SET_TEXT_COLOR_LIGHT_GREY + "- select a square (in the form of a1) and see that piece's legal moves \n" +
                 SET_TEXT_COLOR_BLUE + "menu " +
                 SET_TEXT_COLOR_LIGHT_GREY + "- back to game menu \n" +
                 SET_TEXT_COLOR_BLUE + "quit " +
                 SET_TEXT_COLOR_LIGHT_GREY + "- leave the application \n" +
                 SET_TEXT_COLOR_BLUE + "help " +
-                SET_TEXT_COLOR_LIGHT_GREY + "- view this menu again \n" +
-                SET_TEXT_COLOR_BLUE + "highlight " +
-                SET_TEXT_COLOR_LIGHT_GREY + "- select a square and see that piece's legal moves";
+                SET_TEXT_COLOR_LIGHT_GREY + "- view this menu again";
         /*
         help - help text
         redraw chess board
