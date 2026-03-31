@@ -58,12 +58,12 @@ public class InGameUI implements ClientUI {
     @Override
     public String firstLine() {
         ChessGame chessGame = gameData.game();
+        DrawnChessBoard drawBoard;
         if (color == ChessGame.TeamColor.BLACK) {
-            chessGame.setTeamTurn(ChessGame.TeamColor.BLACK);
+            drawBoard = new DrawnChessBoard(chessGame, color);
         } else {
-            chessGame.setTeamTurn(ChessGame.TeamColor.WHITE);
+            drawBoard = new DrawnChessBoard(chessGame, color);
         }
-        DrawnChessBoard drawBoard = new DrawnChessBoard(chessGame);
         drawBoard.createBoard(null);
         return RESET_BG_COLOR;
     }

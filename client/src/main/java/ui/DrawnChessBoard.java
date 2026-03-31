@@ -9,11 +9,12 @@ import java.util.Collection;
 import java.util.List;
 
 import static chess.ChessGame.TeamColor.BLACK;
+import static chess.ChessGame.TeamColor.WHITE;
 import static ui.EscapeSequences.*;
 
 public class DrawnChessBoard {
     private final ChessBoard board;
-    private final ChessGame.TeamColor teamColor;
+    private final ChessGame.TeamColor perspective;
 
     //padded characters
     private final String[] columnHeaders = {
@@ -37,15 +38,15 @@ public class DrawnChessBoard {
             " 8" + "\u2003"
     };
 
-    public DrawnChessBoard(ChessGame game) {
+    public DrawnChessBoard(ChessGame game, ChessGame.TeamColor perspective) {
         this.board = game.getBoard();
-        this.teamColor = game.getTeamTurn();
+        this.perspective = perspective;
     }
 
     public static void main(String[] args) {
         ChessGame game1 = new ChessGame();
-        game1.setTeamTurn(BLACK);
-        DrawnChessBoard drawIt = new DrawnChessBoard(game1);
+//        game1.setTeamTurn(BLACK);
+        DrawnChessBoard drawIt = new DrawnChessBoard(game1, WHITE);
 
         Collection<ChessMove> moves = game1.validMoves(new ChessPosition(7, 2));
         drawIt.createBoard(moves);
@@ -64,7 +65,7 @@ public class DrawnChessBoard {
     private void drawHeader(PrintStream out) {
         setGrey(out);
         out.print(EMPTY);
-        if (teamColor == BLACK) {
+        if (perspective == BLACK) {
             for (int letter = 7; letter >= 0; letter--) {
                 out.print(columnHeaders[letter]);
             }
@@ -91,7 +92,7 @@ public class DrawnChessBoard {
 
             for (int i = 0; i < 8; i++) {
                 setGrey(out);
-                if(teamColor == BLACK) {out.print(rowHeaders[i]);}
+                if(perspective == BLACK) {out.print(rowHeaders[i]);}
                 else {out.print(rowHeaders[7-i]);}
 
                 for (int j = 0; j < 8; j++) {
@@ -118,7 +119,7 @@ public class DrawnChessBoard {
                     printPiece(out, i, 7-j);
                 }
                 setGrey(out);
-                if(teamColor == BLACK) {out.print(rowHeaders[i]);}
+                if(perspective == BLACK) {out.print(rowHeaders[i]);}
                 else {out.print(rowHeaders[7-i]);}
 
                 setBlack(out);
@@ -129,7 +130,7 @@ public class DrawnChessBoard {
     private boolean startHere(ChessPosition startPosition, int i, int j){
         int row = startPosition.getRow();
         int col = startPosition.getColumn();
-        if (teamColor == BLACK){
+        if (perspective == BLACK){
             if (i + 1 == row && j + 1 == col) {
                 return true;
             }
@@ -145,7 +146,7 @@ public class DrawnChessBoard {
         for (ChessPosition potentialSpace : endPositions) {
             int row = potentialSpace.getRow();
             int col = potentialSpace.getColumn();
-            if (teamColor == BLACK) {
+            if (perspective == BLACK) {
                 if (i + 1 == row && j + 1 == col) {
                     return true;
                 }
@@ -160,7 +161,7 @@ public class DrawnChessBoard {
 
     private void printPiece(PrintStream out, int i, int j) {
         ChessPiece piece;
-        if (teamColor == BLACK) {
+        if (perspective == BLACK) {
             piece = board.getPiece(new ChessPosition(i + 1, j + 1));
         } else {
             piece = board.getPiece(new ChessPosition(8-i, 8-j));
@@ -173,7 +174,7 @@ public class DrawnChessBoard {
         ChessPiece.PieceType type = piece.getPieceType();
         ChessGame.TeamColor pieceColor = piece.getTeamColor();
 
-        if (pieceColor == ChessGame.TeamColor.WHITE) {out.print(SET_TEXT_COLOR_WHITE);}
+        if (pieceColor == WHITE) {out.print(SET_TEXT_COLOR_WHITE);}
         else {out.print(SET_TEXT_COLOR_BLACK);}
 
         if (type == ChessPiece.PieceType.PAWN) {out.print(BLACK_PAWN);}

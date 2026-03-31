@@ -95,6 +95,7 @@ public class PostLoginUI implements ClientUI {
             facade.joinGame(joinGameRequest);
             gameData = listedGames.get(counter);
             if (params[1].equalsIgnoreCase("black")){color = BLACK;}
+            else {color = WHITE;}
             return String.format("You are playing %s", gameData.gameName());
         }
         throw new DataAccessException("Expected: <ID> [WHITE|BLACK]");
