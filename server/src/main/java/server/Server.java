@@ -10,6 +10,7 @@ import io.javalin.http.*;
 import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
 import requestandresult.*;
+import server.websocket.WebSocketHandler;
 import services.ClearService;
 import services.GameService;
 import services.UserService;
@@ -23,6 +24,8 @@ public class Server {
     private final UserService userService;
     private final GameService gameService;
     private final ClearService clearService;
+
+    private final WebSocketHandler webSocketHandler;
 
     private static final MySqlUserDAO USER_DAO;
     private static final MySqlAuthDAO AUTH_DAO;
@@ -49,6 +52,8 @@ public class Server {
         this.gameService = gameService;
         this.clearService = clearService;
 
+        webSocketHandler = new WebSocketHandler(userService, gameService);
+
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .post("/user", this::registerHandler)
                 .post("/session", this::loginHandler)
@@ -60,7 +65,12 @@ public class Server {
                 .exception(ForbiddenResponse.class, this::forbiddenHandler)
                 .exception(BadRequestResponse.class, this::badReqHandler)
                 .exception(UnauthorizedResponse.class, this::unauthorizedHandler)
-                .exception(DataAccessException.class, this::generalExHandler);
+                .exception(DataAccessException.class, this::generalExHandler)
+                .ws("/ws", ws -> {
+                    ws.onConnect(webSocketHandler);
+                    ws.onMessage(webSocketHandler);
+                    ws.onClose(webSocketHandler);
+                });
 
     }
 
