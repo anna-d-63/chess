@@ -188,3 +188,37 @@ if you observe, draw from the point of view of the white player. \
 difference in where the numbers and letters are. \
 Invoke Server API Endpoints \
 Write tests
+
+## Phase 6
+
+maybe put up list of available games in first line for post login ui \
+when the second person joins the game, the first person (and observer if applicable) \
+gets notification. \
+when the observer joins, everyone else gets a notification. \
+when a move is made, their board updates and everyone else gets a notification \
+and the new board is redrawn. \
+Anyone can highlight legal moves for any piece. 
+
+resign means I give up. \
+leave game means that your position is available and someone else can login \
+as that player. It could mean resign but do the first thing
+
+Make move \
+need to see if in check, checkmate, stalemate \
+if those happen, notify everyone. If checkmate or stalemate, game is over. \
+that needs to happen in server
+
+when you make a move, you are reading the game, deserializing the game, change the piece \
+then reserialize the board and send it back
+
+for highlighting, you want to have three different colors: which piece are you checking \
+dark highlight, light highlight.
+
+maybe start draw the chess board differently. with highlighting. do resign and leave then make move. 
+
+maybe leave game is a join as a null user. maybe that doesn't work. I don't have update game. \
+maybe its a websocket notification. need a flag so you can't make a move after the game is over. 
+
+need to know who is in each game. have a map that is keyed by game id and list of people in the game.
+
+this phase takes the longest, get started SOON. you are not supposed to add another web api

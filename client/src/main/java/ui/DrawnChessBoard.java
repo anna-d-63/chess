@@ -43,6 +43,7 @@ public class DrawnChessBoard {
 
     public static void main(String[] args) {
         ChessGame game1 = new ChessGame();
+        game1.setTeamTurn(ChessGame.TeamColor.BLACK);
         DrawnChessBoard drawIt = new DrawnChessBoard(game1);
 
         drawIt.createBoard();
@@ -88,7 +89,7 @@ public class DrawnChessBoard {
                     } else {
                         out.print(SET_BG_COLOR_BROWN);
                     }
-                    printPiece(out, i, j);
+                    printPiece(out, i, 7-j);
                 }
                 setGrey(out);
                 if(teamColor == ChessGame.TeamColor.BLACK) {out.print(rowHeaders[i]);}

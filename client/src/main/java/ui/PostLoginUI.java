@@ -114,6 +114,7 @@ public class PostLoginUI implements ClientUI {
                 throw new DataAccessException("You must join a game in the list");
             }
             gameData = listedGames.get(counter);
+            color = WHITE;
             return String.format("You are observing %s", gameData.gameName());
         }
         throw new DataAccessException("Expected: <ID>");
