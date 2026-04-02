@@ -4,18 +4,15 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 
 public class LoadGameMessage extends ServerMessage {
-    public ChessGame game;
     public ChessGame.TeamColor color;
 
-
-    public LoadGameMessage(ServerMessageType type, ChessGame game, ChessGame.TeamColor color) {
-        super(type);
-        this.game = game;
+    public LoadGameMessage(ChessGame game, ChessGame.TeamColor color) {
+        super(ServerMessageType.LOAD_GAME, new Gson().toJson(game));
         this.color = color;
     }
 
     @Override
-    public String getMessage() {
-        return new Gson().toJson(game);
+    public ChessGame.TeamColor getColor(){
+        return color;
     }
 }

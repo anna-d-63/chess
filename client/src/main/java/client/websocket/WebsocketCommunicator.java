@@ -69,7 +69,7 @@ public class WebsocketCommunicator extends Endpoint {
             ServerMessage message = serializer.fromJson(messageString, ServerMessage.class);
             observer.notify(message);
         } catch (Exception e) {
-            observer.notify(new ErrorMessage(ERROR, e.getMessage()));
+            observer.notify(new ErrorMessage(e.getMessage()));
         }
     }
 }

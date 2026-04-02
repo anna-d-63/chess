@@ -1,7 +1,9 @@
 package client.ui;
 
+import chess.ChessGame;
 import client.websocket.ServerMessageObserver;
 import client.websocket.WebsocketCommunicator;
+import com.google.gson.Gson;
 import exceptions.DataAccessException;
 import websocket.messages.ServerMessage;
 
@@ -56,8 +58,30 @@ public class Repl implements ServerMessageObserver {
     }
 
     @Override
-    public void notify(ServerMessage message) {
-        System.out.println(message.getMessage());
+    public void notify(ServerMessage serverMessage) {
+        switch (serverMessage.getServerMessageType()) {
+            case NOTIFICATION -> displayNotification(serverMessage.getMessage());
+            case LOAD_GAME -> loadGame(serverMessage);
+            case ERROR -> displayError(serverMessage.getMessage());
+        }
+    }
+
+    private void displayNotification(String message) {
+        System.out.print(RESET_BG_COLOR + SET_TEXT_COLOR_RED + message);
+    }
+
+    private void loadGame(ServerMessage serverMessage) {
+        String gameJson = serverMessage.getMessage();
+        ChessGame.TeamColor color = serverMessage.getColor();
+        if (color == null) {
+            color = ChessGame.TeamColor.WHITE;
+        }
+        ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
+        new DrawnChessBoard(game, color).createBoard(null);
+    }
+
+    private void displayError(String message) {
+        System.out.print(RESET_BG_COLOR + SET_TEXT_COLOR_RED + message);
     }
 
     private ClientUI switchUI (ClientUI currentUI) {

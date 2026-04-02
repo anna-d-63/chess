@@ -54,10 +54,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case RESIGN -> resign(session, username, command);
             }
         } catch (UnauthorizedResponse e) {
-            connectionManager.broadcast(gameID, session, new ErrorMessage(ERROR, "Error: unauthorized"));
+            connectionManager.broadcast(gameID, session, new ErrorMessage("Error: unauthorized"));
         } catch (Exception e) {
             e.printStackTrace();
-            connectionManager.broadcast(gameID, session, new ErrorMessage(ERROR, "Error: unauthorized"));
+            connectionManager.broadcast(gameID, session, new ErrorMessage("Error: unauthorized"));
         }
     }
 
@@ -71,7 +71,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         GameData gameData = gameService.getGame(command.getAuthToken(), command.getGameID());
         NotificationMessage message = notifyEm(username, command.getColor());
         connectionManager.broadcast(command.getGameID(), session, message);
-        LoadGameMessage game_message = new LoadGameMessage(LOAD_GAME, gameData.game(), command.getColor());
+        LoadGameMessage game_message = new LoadGameMessage(gameData.game(), command.getColor());
         connectionManager.broadcast(command.getGameID(), session, game_message);
     }
 
@@ -90,9 +90,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         if (color != null) {
             message = String.format("%s entered the game as %s", username, color);
         } else {
-            message = String.format("%s entered the game as an observer");
+            message = String.format("%s entered the game as an observer", username);
         }
-        return new NotificationMessage(NOTIFICATION, message);
+        return new NotificationMessage(message);
     }
 
 }
