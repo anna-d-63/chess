@@ -7,6 +7,7 @@ import exceptions.DataAccessException;
 import jakarta.websocket.*;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.net.URI;
 
 import static websocket.commands.UserGameCommand.CommandType.CONNECT;
 import static websocket.messages.ServerMessage.ServerMessageType.ERROR;
+import static websocket.messages.ServerMessage.ServerMessageType.LOAD_GAME;
 
 public class WebsocketCommunicator extends Endpoint {
 
@@ -67,6 +69,10 @@ public class WebsocketCommunicator extends Endpoint {
     private void handleMessage(String messageString) {
         try {
             ServerMessage message = serializer.fromJson(messageString, ServerMessage.class);
+            if (message.getServerMessageType() == LOAD_GAME) {
+                LoadGameMessage temp = serializer.fromJson(messageString, LoadGameMessage.class);
+                message.setColor(temp.getColor());
+            }
             observer.notify(message);
         } catch (Exception e) {
             observer.notify(new ErrorMessage(e.getMessage()));

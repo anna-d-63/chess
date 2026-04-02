@@ -40,9 +40,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     public void handleMessage(@NotNull WsMessageContext ctx) throws Exception {
         int gameID = -1;
         Session session = ctx.session;
+        UserGameCommand command = null;
 
         try {
-            UserGameCommand command = serializer.fromJson(ctx.message(), UserGameCommand.class);
+            command = serializer.fromJson(ctx.message(), UserGameCommand.class);
             gameID = command.getGameID();
             String username = getUsername(command.getAuthToken());
             connectionManager.saveSession(gameID, session);
@@ -54,10 +55,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case RESIGN -> resign(session, username, command);
             }
         } catch (UnauthorizedResponse e) {
-            connectionManager.broadcast(gameID, session, new ErrorMessage("Error: unauthorized"));
+            connectionManager.broadcast(command, session, new ErrorMessage("Error: unauthorized"));
         } catch (Exception e) {
             e.printStackTrace();
-            connectionManager.broadcast(gameID, session, new ErrorMessage("Error: unauthorized"));
+            connectionManager.broadcast(command, session, new ErrorMessage("Error: unauthorized"));
         }
     }
 
@@ -70,9 +71,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connectionManager.add(command.getGameID(), session);
         GameData gameData = gameService.getGame(command.getAuthToken(), command.getGameID());
         NotificationMessage message = notifyEm(username, command.getColor());
-        connectionManager.broadcast(command.getGameID(), session, message);
+        connectionManager.broadcast(command, session, message);
         LoadGameMessage game_message = new LoadGameMessage(gameData.game(), command.getColor());
-        connectionManager.broadcast(command.getGameID(), session, game_message);
+        connectionManager.broadcast(command, session, game_message);
     }
 
     private void makeMove(Session session, String username, MakeMoveCommand command) {}

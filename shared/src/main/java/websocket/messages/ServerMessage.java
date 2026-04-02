@@ -13,6 +13,7 @@ import java.util.Objects;
 public class ServerMessage {
     ServerMessageType serverMessageType;
     String message;
+    ChessGame.TeamColor color;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -20,9 +21,10 @@ public class ServerMessage {
         NOTIFICATION
     }
 
-    public ServerMessage(ServerMessageType type, String message) {
+    public ServerMessage(ServerMessageType type, String message, ChessGame.TeamColor color) {
         this.serverMessageType = type;
         this.message = message;
+        this.color = color;
     }
 
     public ServerMessageType getServerMessageType() {
@@ -35,6 +37,10 @@ public class ServerMessage {
 
     public ChessGame.TeamColor getColor(){
         return null;
+    }
+
+    public void setColor(ChessGame.TeamColor color) {
+        this.color = color;
     }
 
     @Override
@@ -51,5 +57,14 @@ public class ServerMessage {
     @Override
     public int hashCode() {
         return Objects.hash(getServerMessageType());
+    }
+
+    @Override
+    public String toString() {
+        return "ServerMessage{" +
+                "serverMessageType=" + serverMessageType +
+                ", message='" + message + '\'' +
+                ", color=" + color +
+                '}';
     }
 }
