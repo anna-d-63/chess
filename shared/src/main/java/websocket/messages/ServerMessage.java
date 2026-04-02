@@ -36,7 +36,7 @@ public class ServerMessage {
     }
 
     public ChessGame.TeamColor getColor(){
-        return null;
+        return color;
     }
 
     public void setColor(ChessGame.TeamColor color) {

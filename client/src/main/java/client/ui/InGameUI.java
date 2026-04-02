@@ -48,7 +48,10 @@ public class InGameUI implements ClientUI {
     }
 
     private String redrawBoard() {
-        return firstLine();
+        ChessGame chessGame = gameData.game();
+        DrawnChessBoard drawBoard = new DrawnChessBoard(chessGame, color);
+        drawBoard.createBoard(null);
+        return RESET_BG_COLOR;
     }
 
     private final Character[] cols = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
@@ -95,9 +98,6 @@ public class InGameUI implements ClientUI {
 
     @Override
     public String firstLine() {
-        ChessGame chessGame = gameData.game();
-        DrawnChessBoard drawBoard = new DrawnChessBoard(chessGame, color);
-        drawBoard.createBoard(null);
         return RESET_BG_COLOR;
     }
 

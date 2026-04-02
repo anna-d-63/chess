@@ -69,10 +69,6 @@ public class WebsocketCommunicator extends Endpoint {
     private void handleMessage(String messageString) {
         try {
             ServerMessage message = serializer.fromJson(messageString, ServerMessage.class);
-            if (message.getServerMessageType() == LOAD_GAME) {
-                LoadGameMessage temp = serializer.fromJson(messageString, LoadGameMessage.class);
-                message.setColor(temp.getColor());
-            }
             observer.notify(message);
         } catch (Exception e) {
             observer.notify(new ErrorMessage(e.getMessage()));

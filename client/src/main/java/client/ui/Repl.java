@@ -67,7 +67,7 @@ public class Repl implements ServerMessageObserver {
     }
 
     private void displayNotification(String message) {
-        System.out.print(RESET_BG_COLOR + SET_TEXT_COLOR_RED + message);
+        System.out.println(RESET_BG_COLOR + SET_TEXT_COLOR_MAGENTA + message);
     }
 
     private void loadGame(ServerMessage serverMessage) {
@@ -77,11 +77,12 @@ public class Repl implements ServerMessageObserver {
             color = ChessGame.TeamColor.WHITE;
         }
         ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
+        System.out.println();
         new DrawnChessBoard(game, color).createBoard(null);
     }
 
     private void displayError(String message) {
-        System.out.print(RESET_BG_COLOR + SET_TEXT_COLOR_RED + message);
+        System.out.println(RESET_BG_COLOR + SET_TEXT_COLOR_RED + message);
     }
 
     private ClientUI switchUI (ClientUI currentUI) {
