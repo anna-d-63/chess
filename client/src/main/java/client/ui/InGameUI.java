@@ -1,4 +1,4 @@
-package ui;
+package client.ui;
 
 import chess.ChessGame;
 import chess.ChessPosition;
@@ -10,8 +10,8 @@ import requestandresult.LogoutRequest;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static ui.EscapeSequences.*;
-import static ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
+import static client.ui.EscapeSequences.*;
+import static client.ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
 
 public class InGameUI implements ClientUI {
 

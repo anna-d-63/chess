@@ -1,6 +1,6 @@
 package client;
 
-import ui.Repl;
+import client.ui.Repl;
 
 public class ClientMain {
     public static void main(String[] args) {

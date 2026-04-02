@@ -1,4 +1,4 @@
-package ui;
+package client.ui;
 
 import chess.*;
 
@@ -10,7 +10,7 @@ import java.util.List;
 
 import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
-import static ui.EscapeSequences.*;
+import static client.ui.EscapeSequences.*;
 
 public class DrawnChessBoard {
     private final ChessBoard board;

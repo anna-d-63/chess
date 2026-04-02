@@ -1,4 +1,4 @@
-package ui;
+package client.ui;
 
 import chess.ChessGame;
 import client.ServerFacade;
@@ -12,7 +12,7 @@ import requestandresult.RegisterResult;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static ui.EscapeSequences.*;
+import static client.ui.EscapeSequences.*;
 
 public class PreLoginUI implements ClientUI {
 

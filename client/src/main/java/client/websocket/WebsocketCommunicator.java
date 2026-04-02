@@ -1,4 +1,4 @@
-package client;
+package client.websocket;
 
 import exceptions.DataAccessException;
 import jakarta.websocket.*;

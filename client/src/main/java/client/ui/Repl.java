@@ -1,9 +1,9 @@
-package ui;
+package client.ui;
 
 import exceptions.DataAccessException;
 
 import java.util.Scanner;
-import static ui.EscapeSequences.*;
+import static client.ui.EscapeSequences.*;
 
 
 public class Repl {
