@@ -4,6 +4,7 @@ import chess.ChessGame;
 import chess.ChessPosition;
 import client.ServerFacade;
 import client.websocket.ServerMessageObserver;
+import client.websocket.WebsocketCommunicator;
 import exceptions.DataAccessException;
 import model.GameData;
 import requestandresult.LogoutRequest;
@@ -15,15 +16,17 @@ import java.util.Objects;
 import static client.ui.EscapeSequences.*;
 import static client.ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
 
-public class InGameUI implements ClientUI, ServerMessageObserver {
+public class InGameUI implements ClientUI {
 
     private final ServerFacade facade;
+    WebsocketCommunicator ws;
     public String authToken = null;
     public GameData gameData = null;
     public ChessGame.TeamColor color = null;
 
-    InGameUI(int port) {
+    InGameUI(int port, WebsocketCommunicator ws) {
         facade = new ServerFacade(port);
+        this.ws = ws;
     }
 
     @Override
@@ -125,11 +128,6 @@ public class InGameUI implements ClientUI, ServerMessageObserver {
                                 The selected piece’s current square and all squares it can legally move to are highlighted.
                                 This is a local operation and has no effect on remote users’ screens.
          */
-    }
-
-    @Override
-    public void notify(ServerMessage message) {
-        System.out.println(message.getMessage());
     }
 
     public String getAuthToken() {

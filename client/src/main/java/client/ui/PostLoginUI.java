@@ -2,9 +2,12 @@ package client.ui;
 
 import chess.ChessGame;
 import client.ServerFacade;
+import client.websocket.ServerMessageObserver;
+import client.websocket.WebsocketCommunicator;
 import exceptions.DataAccessException;
 import model.GameData;
 import requestandresult.*;
+import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,13 +22,15 @@ import static client.ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
 public class PostLoginUI implements ClientUI {
 
     private final ServerFacade facade;
+    WebsocketCommunicator ws;
     public String authToken = null;
     GameData gameData = null;
     public ChessGame.TeamColor color = WHITE;
     private final HashMap<Integer, GameData> listedGames = new HashMap<>();
 
-    PostLoginUI(int port) {
+    PostLoginUI(int port, WebsocketCommunicator ws) {
         facade = new ServerFacade(port);
+        this.ws = ws;
     }
 
     @Override
@@ -99,6 +104,7 @@ public class PostLoginUI implements ClientUI {
             gameData = listedGames.get(counter);
             if (params[1].equalsIgnoreCase("black")){color = BLACK;}
             else {color = WHITE;}
+            ws.connectToGame(authToken, gameID, color);
             return String.format("You are playing %s", gameData.gameName());
         }
         throw new DataAccessException("Expected: <ID> [WHITE|BLACK]");
@@ -119,6 +125,7 @@ public class PostLoginUI implements ClientUI {
             }
             gameData = listedGames.get(counter);
             color = WHITE;
+            ws.connectToGame(authToken, gameData.gameID(), null);
             return String.format("You are observing %s", gameData.gameName());
         }
         throw new DataAccessException("Expected: <ID>");

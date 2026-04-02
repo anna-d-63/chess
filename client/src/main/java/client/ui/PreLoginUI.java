@@ -2,6 +2,7 @@ package client.ui;
 
 import chess.ChessGame;
 import client.ServerFacade;
+import client.websocket.WebsocketCommunicator;
 import exceptions.DataAccessException;
 import model.GameData;
 import requestandresult.LoginRequest;
@@ -20,7 +21,7 @@ public class PreLoginUI implements ClientUI {
     public String authToken = null;
     public GameData gameData = null;
 
-    PreLoginUI(int port) throws DataAccessException {
+    PreLoginUI(int port) {
         facade = new ServerFacade(port);
     }
 

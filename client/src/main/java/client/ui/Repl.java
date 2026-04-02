@@ -1,20 +1,25 @@
 package client.ui;
 
+import client.websocket.ServerMessageObserver;
+import client.websocket.WebsocketCommunicator;
 import exceptions.DataAccessException;
+import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
 import static client.ui.EscapeSequences.*;
 
 
-public class Repl {
+public class Repl implements ServerMessageObserver {
     private final PreLoginUI preLogin;
     private final PostLoginUI postLogin;
     private final InGameUI inGame;
+    private final WebsocketCommunicator ws;
 
     public Repl(int port) throws DataAccessException {
+        ws = new WebsocketCommunicator(String.format("http://localhost:%d", port), this);
         preLogin = new PreLoginUI(port);
-        postLogin = new PostLoginUI(port);
-        inGame = new InGameUI(port);
+        postLogin = new PostLoginUI(port, ws);
+        inGame = new InGameUI(port, ws);
     }
 
     public void run() {
@@ -48,6 +53,11 @@ public class Repl {
 
     private void printPrompt() {
         System.out.print("\n" + SET_TEXT_COLOR_GREEN + ">>> ");
+    }
+
+    @Override
+    public void notify(ServerMessage message) {
+        System.out.println(message.getMessage());
     }
 
     private ClientUI switchUI (ClientUI currentUI) {
