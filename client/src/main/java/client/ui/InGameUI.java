@@ -3,9 +3,11 @@ package client.ui;
 import chess.ChessGame;
 import chess.ChessPosition;
 import client.ServerFacade;
+import client.websocket.ServerMessageObserver;
 import exceptions.DataAccessException;
 import model.GameData;
 import requestandresult.LogoutRequest;
+import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -13,7 +15,7 @@ import java.util.Objects;
 import static client.ui.EscapeSequences.*;
 import static client.ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
 
-public class InGameUI implements ClientUI {
+public class InGameUI implements ClientUI, ServerMessageObserver {
 
     private final ServerFacade facade;
     public String authToken = null;
@@ -125,6 +127,10 @@ public class InGameUI implements ClientUI {
          */
     }
 
+    @Override
+    public void notify(ServerMessage message) {
+        System.out.println(message.getMessage());
+    }
 
     public String getAuthToken() {
         return this.authToken;

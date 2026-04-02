@@ -81,8 +81,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void resign(Session session, String username, UserGameCommand command) {}
 
-    private String getUsername(String authToken) {
-        return null;
+    private String getUsername(String authToken) throws DataAccessException {
+        return userService.getAuthData(authToken).username();
     }
 
     private NotificationMessage notifyEm(String username, ChessGame.TeamColor color) {

@@ -55,6 +55,10 @@ public class UserService {
         authDAO.deleteAuth(request.authToken());
     }
 
+    public AuthData getAuthData(String authToken) throws DataAccessException {
+        return authDAO.getAuth(authToken);
+    }
+
     private boolean verifyUser(String username, String providedClearTextPassword, String hashedPassword) {
         return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
     }
