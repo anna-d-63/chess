@@ -1,5 +1,6 @@
 package services;
 
+import chess.ChessGame;
 import dataaccess.AuthDAO;
 import exceptions.DataAccessException;
 import dataaccess.GameDAO;
@@ -58,6 +59,11 @@ public class GameService {
         } else {
             throw new BadRequestResponse("bad request");
         }
+    }
+
+    public GameData getGame(String authToken, int gameID) throws DataAccessException {
+        authorizeUser(authToken);
+        return gameDAO.getGame(gameID);
     }
 
     private void checkNull(ParentRequest request) {

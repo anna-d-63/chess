@@ -1,8 +1,11 @@
 package server.websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
+import exceptions.DataAccessException;
 import io.javalin.http.UnauthorizedResponse;
 import io.javalin.websocket.*;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.jetbrains.annotations.NotNull;
 import services.GameService;
@@ -10,6 +13,8 @@ import services.UserService;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import static websocket.messages.ServerMessage.ServerMessageType.*;
@@ -40,7 +45,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             UserGameCommand command = serializer.fromJson(ctx.message(), UserGameCommand.class);
             gameID = command.getGameID();
             String username = getUsername(command.getAuthToken());
-            saveSession(gameID, session);
+            connectionManager.saveSession(gameID, session);
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(session, username, command);
@@ -49,10 +54,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case RESIGN -> resign(session, username, command);
             }
         } catch (UnauthorizedResponse e) {
-            sendMessage(session, gameID, new ErrorMessage(ERROR, "Error: unauthorized"));
+            connectionManager.broadcast(gameID, session, new ErrorMessage(ERROR, "Error: unauthorized"));
         } catch (Exception e) {
             e.printStackTrace();
-            sendMessage(session, gameID, new ErrorMessage(ERROR, "Error: unauthorized"));
+            connectionManager.broadcast(gameID, session, new ErrorMessage(ERROR, "Error: unauthorized"));
         }
     }
 
@@ -61,7 +66,14 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         System.out.println("Websocket closed");
     }
 
-    private void connect(Session session, String username, UserGameCommand command) {}
+    private void connect(Session session, String username, UserGameCommand command) throws Exception {
+        connectionManager.add(command.getGameID(), session);
+        GameData gameData = gameService.getGame(command.getAuthToken(), command.getGameID());
+        NotificationMessage message = notifyEm(username, command.getColor());
+        connectionManager.broadcast(command.getGameID(), session, message);
+        LoadGameMessage game_message = new LoadGameMessage(LOAD_GAME, gameData.game(), command.getColor());
+        connectionManager.broadcast(command.getGameID(), session, game_message);
+    }
 
     private void makeMove(Session session, String username, MakeMoveCommand command) {}
 
@@ -73,7 +85,14 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         return null;
     }
 
-    private void saveSession(int gameID, Session session) {}
+    private NotificationMessage notifyEm(String username, ChessGame.TeamColor color) {
+        String message;
+        if (color != null) {
+            message = String.format("%s entered the game as %s", username, color);
+        } else {
+            message = String.format("%s entered the game as an observer");
+        }
+        return new NotificationMessage(NOTIFICATION, message);
+    }
 
-    private void sendMessage(Session session, int gameID, ServerMessage message) {}
 }
