@@ -63,7 +63,11 @@ public class GameService {
 
     public GameData getGame(String authToken, int gameID) throws DataAccessException {
         authorizeUser(authToken);
-        return gameDAO.getGame(gameID);
+        GameData game = gameDAO.getGame(gameID);
+        if (game == null) {
+            throw new UnauthorizedResponse("unauthorized");
+        }
+        return game;
     }
 
     private void checkNull(ParentRequest request) {

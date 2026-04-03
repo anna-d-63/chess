@@ -5,9 +5,11 @@ import com.google.gson.Gson;
 import exceptions.DataAccessException;
 import io.javalin.http.UnauthorizedResponse;
 import io.javalin.websocket.*;
+import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.jetbrains.annotations.NotNull;
+import requestandresult.ListGamesRequest;
 import services.GameService;
 import services.UserService;
 import websocket.commands.MakeMoveCommand;
@@ -16,6 +18,8 @@ import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
+
+import java.util.Collection;
 
 import static websocket.commands.UserGameCommand.CommandType.CONNECT;
 import static websocket.messages.ServerMessage.ServerMessageType.*;
@@ -46,8 +50,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         try {
             command = serializer.fromJson(ctx.message(), UserGameCommand.class);
             gameID = command.getGameID();
-            String username = getUsername(command.getAuthToken());
             connectionManager.saveSession(gameID, session);
+            String username = getUsername(command.getAuthToken());
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(session, username, command);
@@ -71,13 +75,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void connect(Session session, String username, UserGameCommand command) throws Exception {
-        connectionManager.add(command.getGameID(), session);
+        GameData gameData = gameService.getGame(command.getAuthToken(), command.getGameID());
 
         NotificationMessage notificationMessage = notifyEm(username, command.getColor());
         String message = serializer.toJson(notificationMessage);
         connectionManager.broadcast(command, session, message, NOTIFICATION);
 
-        GameData gameData = gameService.getGame(command.getAuthToken(), command.getGameID());
         String game_message = serializer.toJson(new LoadGameMessage(serializer.toJson(gameData.game()), command.getColor()));
         connectionManager.broadcast(command, session, game_message, LOAD_GAME);
     }
@@ -89,7 +92,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private void resign(Session session, String username, UserGameCommand command) {}
 
     private String getUsername(String authToken) throws DataAccessException {
-        return userService.getAuthData(authToken).username();
+        AuthData authData = userService.getAuthData(authToken);
+        if (authData == null) {
+            throw new UnauthorizedResponse("unauthorized");
+        }
+        return authData.username();
     }
 
     private NotificationMessage notifyEm(String username, ChessGame.TeamColor color) {

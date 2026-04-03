@@ -18,9 +18,7 @@ import static websocket.messages.ServerMessage.ServerMessageType.*;
 public class ConnectionManager {
     public final HashMap<Integer, Set<Session>> connections = new HashMap<>();
 
-    public void saveSession(int gameID, Session session) {}
-
-    public void add(int gameID, Session session){
+    public void saveSession(int gameID, Session session){
         if (!connections.containsKey(gameID)) {
             connections.put(gameID, new HashSet<>());
         }
