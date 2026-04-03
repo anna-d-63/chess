@@ -1,6 +1,7 @@
 package server.websocket;
 
 import com.google.gson.Gson;
+import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
@@ -26,28 +27,22 @@ public class ConnectionManager {
         connections.get(gameID).add(session);
     }
 
-    public void broadcast(UserGameCommand command, Session theirSession, ServerMessage serverMessage) throws IOException {
-        int gameID;
-        UserGameCommand.CommandType type;
-        if (command == null) {
-            gameID = -1;
-            type = CONNECT;
-        } else {
-            gameID = command.getGameID();
-            type = command.getCommandType();
-        }
+    public void broadcast(UserGameCommand command, Session theirSession, String serverMessage,
+                          ServerMessage.ServerMessageType type) throws IOException {
+        int gameID = command.getGameID();
+        UserGameCommand.CommandType commandType = command.getCommandType();
+
         Set<Session> inThisGame = connections.get(gameID);
-        String json = new Gson().toJson(serverMessage);
         for (Session c : inThisGame) {
             if (c.isOpen()) {
-                if (serverMessage.getServerMessageType() == NOTIFICATION && !c.equals(theirSession)) {
-                    c.getRemote().sendString(json);
-                } else if (serverMessage.getServerMessageType() == LOAD_GAME) {
-                    if ((type == CONNECT && c.equals(theirSession)) || type == MAKE_MOVE) {
-                        c.getRemote().sendString(json);
+                if (type == NOTIFICATION && !c.equals(theirSession)) {
+                    c.getRemote().sendString(serverMessage);
+                } else if (type == LOAD_GAME) {
+                    if ((commandType == CONNECT && c.equals(theirSession)) || commandType == MAKE_MOVE) {
+                        c.getRemote().sendString(serverMessage);
                     }
-                } else if (serverMessage.getServerMessageType() == ERROR && c.equals(theirSession)) {
-                    c.getRemote().sendString(json);
+                } else if (type == ERROR && c.equals(theirSession)) {
+                    c.getRemote().sendString(serverMessage);
                 }
             }
         }

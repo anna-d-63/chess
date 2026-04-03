@@ -17,6 +17,7 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
+import static websocket.commands.UserGameCommand.CommandType.CONNECT;
 import static websocket.messages.ServerMessage.ServerMessageType.*;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
@@ -40,7 +41,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     public void handleMessage(@NotNull WsMessageContext ctx) throws Exception {
         int gameID = -1;
         Session session = ctx.session;
-        UserGameCommand command = null;
+        UserGameCommand command = new UserGameCommand(CONNECT, "", gameID, ChessGame.TeamColor.BLACK);
 
         try {
             command = serializer.fromJson(ctx.message(), UserGameCommand.class);
@@ -55,10 +56,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case RESIGN -> resign(session, username, command);
             }
         } catch (UnauthorizedResponse e) {
-            connectionManager.broadcast(command, session, new ErrorMessage("Error: unauthorized"));
+            String errorMessage = serializer.toJson(new ErrorMessage("Error: unauthorized"));
+            connectionManager.broadcast(command, session, errorMessage, ERROR);
         } catch (Exception e) {
             e.printStackTrace();
-            connectionManager.broadcast(command, session, new ErrorMessage("Error: unauthorized"));
+            String errorMessage = serializer.toJson(new ErrorMessage("Error: " + e.getMessage()));
+            connectionManager.broadcast(command, session, errorMessage, ERROR);
         }
     }
 
@@ -69,11 +72,14 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void connect(Session session, String username, UserGameCommand command) throws Exception {
         connectionManager.add(command.getGameID(), session);
+
+        NotificationMessage notificationMessage = notifyEm(username, command.getColor());
+        String message = serializer.toJson(notificationMessage);
+        connectionManager.broadcast(command, session, message, NOTIFICATION);
+
         GameData gameData = gameService.getGame(command.getAuthToken(), command.getGameID());
-        NotificationMessage message = notifyEm(username, command.getColor());
-        connectionManager.broadcast(command, session, message);
-        LoadGameMessage game_message = new LoadGameMessage(gameData.game(), command.getColor());
-        connectionManager.broadcast(command, session, game_message);
+        String game_message = serializer.toJson(new LoadGameMessage(serializer.toJson(gameData.game()), command.getColor()));
+        connectionManager.broadcast(command, session, game_message, LOAD_GAME);
     }
 
     private void makeMove(Session session, String username, MakeMoveCommand command) {}

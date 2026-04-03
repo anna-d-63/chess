@@ -5,6 +5,9 @@ import client.websocket.ServerMessageObserver;
 import client.websocket.WebsocketCommunicator;
 import com.google.gson.Gson;
 import exceptions.DataAccessException;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
@@ -15,10 +18,9 @@ public class Repl implements ServerMessageObserver {
     private final PreLoginUI preLogin;
     private final PostLoginUI postLogin;
     private final InGameUI inGame;
-    private final WebsocketCommunicator ws;
 
     public Repl(int port) throws DataAccessException {
-        ws = new WebsocketCommunicator(String.format("http://localhost:%d", port), this);
+        WebsocketCommunicator ws = new WebsocketCommunicator(String.format("http://localhost:%d", port), this);
         preLogin = new PreLoginUI(port);
         postLogin = new PostLoginUI(port, ws);
         inGame = new InGameUI(port, ws);
@@ -60,19 +62,19 @@ public class Repl implements ServerMessageObserver {
     @Override
     public void notify(ServerMessage serverMessage) {
         switch (serverMessage.getServerMessageType()) {
-            case NOTIFICATION -> displayNotification(serverMessage.getMessage());
-            case LOAD_GAME -> loadGame(serverMessage);
-            case ERROR -> displayError(serverMessage.getMessage());
+            case NOTIFICATION -> displayNotification( (NotificationMessage) serverMessage);
+            case LOAD_GAME -> loadGame( (LoadGameMessage) serverMessage);
+            case ERROR -> displayError( (ErrorMessage) serverMessage);
         }
     }
 
-    private void displayNotification(String message) {
-        System.out.println(RESET_BG_COLOR + SET_TEXT_COLOR_MAGENTA + message);
+    private void displayNotification(NotificationMessage message) {
+        System.out.println(RESET_BG_COLOR + SET_TEXT_COLOR_MAGENTA + message.getMessage());
     }
 
-    private void loadGame(ServerMessage serverMessage) {
-        String gameJson = serverMessage.getMessage();
-        ChessGame.TeamColor color = serverMessage.getColor();
+    private void loadGame(LoadGameMessage message) {
+        String gameJson = message.getGame();
+        ChessGame.TeamColor color = message.getColor();
         if (color == null) {
             color = ChessGame.TeamColor.WHITE;
         }
@@ -81,7 +83,7 @@ public class Repl implements ServerMessageObserver {
         new DrawnChessBoard(game, color).createBoard(null);
     }
 
-    private void displayError(String message) {
+    private void displayError(ErrorMessage message) {
         System.out.println(RESET_BG_COLOR + SET_TEXT_COLOR_RED + message);
     }
 
