@@ -1,6 +1,7 @@
 package server.websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import exceptions.DataAccessException;
 import io.javalin.http.UnauthorizedResponse;
@@ -22,6 +23,7 @@ import websocket.messages.ServerMessage;
 import java.util.Collection;
 
 import static websocket.commands.UserGameCommand.CommandType.CONNECT;
+import static websocket.commands.UserGameCommand.CommandType.MAKE_MOVE;
 import static websocket.messages.ServerMessage.ServerMessageType.*;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
@@ -49,6 +51,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         try {
             command = serializer.fromJson(ctx.message(), UserGameCommand.class);
+            if (command.getCommandType() == MAKE_MOVE) {
+                command = serializer.fromJson(ctx.message(), MakeMoveCommand.class);
+            }
             gameID = command.getGameID();
             connectionManager.saveSession(gameID, session);
             String username = getUsername(command.getAuthToken());
@@ -85,7 +90,21 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connectionManager.broadcast(command, session, game_message, LOAD_GAME);
     }
 
-    private void makeMove(Session session, String username, MakeMoveCommand command) {}
+    private void makeMove(Session session, String username, MakeMoveCommand command) throws DataAccessException {
+        GameData gameData = gameService.getGame(command.getAuthToken(), command.getGameID());
+        testIfTheirTurn(username, command, gameData);
+        testIfValidMove(command.getMove(), gameData);
+        ChessGame updatedGame = updateGame(gameData, command.getMove());
+        storeGame = gameService.setGame(command.getGameID(), updatedGame);
+        //send load game message
+        //send notification message about what move was made
+        //send notification message if check, checkmate, or stalemate. TODO: be able to check for those things
+        Collection<ChessMove> validMoves = gameData.game().validMoves(command.getMove().getStartPosition());
+        if (!validMoves.contains(command.getMove())){
+            throw new DataAccessException("move is not valid");
+        }
+
+    }
 
     private void leaveGame(Session session, String username, UserGameCommand command) {}
 

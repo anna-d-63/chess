@@ -5,6 +5,7 @@ import chess.ChessMove;
 import com.google.gson.Gson;
 import exceptions.DataAccessException;
 import jakarta.websocket.*;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import static websocket.commands.UserGameCommand.CommandType.CONNECT;
+import static websocket.commands.UserGameCommand.CommandType.MAKE_MOVE;
 import static websocket.messages.ServerMessage.ServerMessageType.*;
 
 public class WebsocketCommunicator extends Endpoint {
@@ -60,7 +62,14 @@ public class WebsocketCommunicator extends Endpoint {
     }
 
     public void makeAMove(
-            String authToken, int gameID, ChessGame.TeamColor color, ChessMove move) throws DataAccessException {}
+            String authToken, int gameID, ChessGame.TeamColor color, ChessMove move) throws DataAccessException {
+        try {
+            var command = new MakeMoveCommand(MAKE_MOVE, authToken, gameID, color, move);
+            this.session.getBasicRemote().sendText(serializer.toJson(command));
+        } catch (IOException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
 
     public void leaveGame(String authToken, int gameID, ChessGame.TeamColor color) throws DataAccessException {}
 
