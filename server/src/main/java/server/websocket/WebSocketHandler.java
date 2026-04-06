@@ -62,6 +62,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             gameID = command.getGameID();
             connectionManager.saveSession(gameID, session);
             String username = getUsername(command.getAuthToken());
+            setColor(command, username, gameID, command.getAuthToken());
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(session, username, command);
@@ -146,6 +147,16 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             throw new UnauthorizedResponse("Error: unauthorized");
         }
         return authData.username();
+    }
+
+    private void setColor(UserGameCommand command, String username, int gameID, String authToken) throws DataAccessException {
+        if (command.getColor() != null) {return;}
+        GameData gameData = gameService.getGame(authToken, gameID);
+        if (gameData.whiteUsername().equals(username)) {
+            command.setColor(WHITE);
+        } else if (gameData.blackUsername().equals(username)) {
+            command.setColor(BLACK);
+        }
     }
 
     private void testIfTheirTurn(MakeMoveCommand command, GameData gameData) throws DataAccessException {
