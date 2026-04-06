@@ -2,6 +2,8 @@ package server.websocket;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPosition;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import exceptions.DataAccessException;
 import io.javalin.http.UnauthorizedResponse;
@@ -20,8 +22,11 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
+import java.io.IOException;
 import java.util.Collection;
 
+import static chess.ChessGame.TeamColor.BLACK;
+import static chess.ChessGame.TeamColor.WHITE;
 import static websocket.commands.UserGameCommand.CommandType.CONNECT;
 import static websocket.commands.UserGameCommand.CommandType.MAKE_MOVE;
 import static websocket.messages.ServerMessage.ServerMessageType.*;
@@ -47,7 +52,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     public void handleMessage(@NotNull WsMessageContext ctx) throws Exception {
         int gameID = -1;
         Session session = ctx.session;
-        UserGameCommand command = new UserGameCommand(CONNECT, "", gameID, ChessGame.TeamColor.BLACK);
+        UserGameCommand command = new UserGameCommand(CONNECT, "", gameID, BLACK);
 
         try {
             command = serializer.fromJson(ctx.message(), UserGameCommand.class);
@@ -90,20 +95,45 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connectionManager.broadcast(command, session, game_message, LOAD_GAME);
     }
 
-    private void makeMove(Session session, String username, MakeMoveCommand command) throws DataAccessException {
-        GameData gameData = gameService.getGame(command.getAuthToken(), command.getGameID());
-        testIfTheirTurn(username, command, gameData);
-        testIfValidMove(command.getMove(), gameData);
-        ChessGame updatedGame = updateGame(gameData, command.getMove());
-        storeGame = gameService.setGame(command.getGameID(), updatedGame);
-        //send load game message
-        //send notification message about what move was made
-        //send notification message if check, checkmate, or stalemate. TODO: be able to check for those things
-        Collection<ChessMove> validMoves = gameData.game().validMoves(command.getMove().getStartPosition());
-        if (!validMoves.contains(command.getMove())){
-            throw new DataAccessException("move is not valid");
-        }
+    private void makeMove(Session session, String username, MakeMoveCommand command)
+            throws DataAccessException, InvalidMoveException, IOException {
 
+        GameData gameData = gameService.getGame(command.getAuthToken(), command.getGameID());
+        testIfTheirTurn(command, gameData);
+        testIfValidMove(command.getMove(), gameData);
+        ChessGame updatedGame = updateGame(command.getMove(), gameData);
+        gameService.setGame(command.getGameID(), updatedGame);
+
+        String game_message = serializer.toJson(new LoadGameMessage(serializer.toJson(updatedGame), command.getColor()));
+        connectionManager.broadcast(command, session, game_message, LOAD_GAME);
+
+        String formattedMove = formatMove(command.getMove());
+        var message = serializer.toJson(new NotificationMessage(String.format("%s moved %s", username, formattedMove)));
+        connectionManager.broadcast(command, session, message, NOTIFICATION);
+
+
+        ChessGame.TeamColor otherColor;
+        if (command.getColor() == WHITE) {
+            otherColor = BLACK;
+        } else {otherColor = WHITE;}
+        //TODO: get other username using otherColor and gameData
+
+        if (updatedGame.isInCheck(otherColor) && !updatedGame.isInCheckmate(otherColor)) {
+            var checkMessage =
+                    serializer.toJson(new NotificationMessage(String.format("%s is in check", "otherUsername")));
+            connectionManager.broadcast(command, session, checkMessage, NOTIFICATION);
+        } else if (updatedGame.isInCheckmate(otherColor)) {
+            var checkmateMessage =
+                    serializer.toJson(new NotificationMessage(String.format("%s is in checkmate", "otherUsername")));
+            connectionManager.broadcast(command, session, checkmateMessage, NOTIFICATION);
+            //allow no more moves to be made
+        } else if (updatedGame.isInStalemate(otherColor)) {
+            var stalemateMessage =
+                    serializer.toJson(new NotificationMessage("stalemate, bummer"));
+            connectionManager.broadcast(command, session, stalemateMessage, NOTIFICATION);
+            //allow no more moves to be made
+        }
+        //TODO: do everything on the client side for make move
     }
 
     private void leaveGame(Session session, String username, UserGameCommand command) {}
@@ -113,9 +143,37 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private String getUsername(String authToken) throws DataAccessException {
         AuthData authData = userService.getAuthData(authToken);
         if (authData == null) {
-            throw new UnauthorizedResponse("unauthorized");
+            throw new UnauthorizedResponse("Error: unauthorized");
         }
         return authData.username();
+    }
+
+    private void testIfTheirTurn(MakeMoveCommand command, GameData gameData) throws DataAccessException {
+        ChessGame.TeamColor theirColor = command.getColor();
+        ChessGame game = gameData.game();
+        ChessGame.TeamColor teamTurn = game.getTeamTurn();
+        if (theirColor != teamTurn) {
+            throw new DataAccessException("Error: can only make a move on your turn.");
+        }
+    }
+
+    private void testIfValidMove(ChessMove move, GameData gameData) throws DataAccessException {
+        ChessGame game = gameData.game();
+        ChessPosition startPos = move.getStartPosition();
+        Collection<ChessMove> validMoves = game.validMoves(startPos);
+        if (!validMoves.contains(move)) {
+            throw new DataAccessException("Error: not a valid move.");
+        }
+    }
+
+    private ChessGame updateGame(ChessMove move, GameData gameData) throws InvalidMoveException {
+        ChessGame game = gameData.game();
+        game.makeMove(move);
+        return game;
+    }
+
+    private String formatMove(ChessMove move) {
+        return "blank";
     }
 
     private NotificationMessage notifyEm(String username, ChessGame.TeamColor color) {

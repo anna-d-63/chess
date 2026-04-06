@@ -70,6 +70,10 @@ public class GameService {
         return game;
     }
 
+    public void setGame(int gameID, ChessGame updatedGame) throws DataAccessException {
+        gameDAO.setGame(gameID, updatedGame);
+    }
+
     private void checkNull(ParentRequest request) {
         if (request.hasNullFields()){throw new BadRequestResponse("bad request");}
     }

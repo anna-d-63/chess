@@ -111,8 +111,6 @@ public class MySqlGameDAO extends MySql implements GameDAO {
 
     @Override
     public void updateGame(String playerColor, String username, int gameID) throws DataAccessException {
-        GameData oldGame = getGame(gameID);
-        GameData updatedGame;
         try (Connection conn = DatabaseManager.getConnection()) {
             if (playerColor.equals("WHITE")) {
                 try (PreparedStatement ps = conn.prepareStatement(
@@ -133,6 +131,20 @@ public class MySqlGameDAO extends MySql implements GameDAO {
             }
         } catch (SQLException e) {
             throw new DataAccessException("failed to update game", e);
+        }
+    }
+
+    @Override
+    public void setGame(int gameID, ChessGame game) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE games SET gameJson=? WHERE gameID=?")) {
+                ps.setString(1, json.toJson(game));
+                ps.setInt(2, gameID);
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("failed to set game", e);
         }
     }
 

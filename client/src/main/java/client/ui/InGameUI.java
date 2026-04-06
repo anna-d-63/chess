@@ -1,6 +1,8 @@
 package client.ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import client.ServerFacade;
 import client.websocket.ServerMessageObserver;
@@ -38,6 +40,7 @@ public class InGameUI implements ClientUI {
             return switch(cmd) {
                 case "redraw" -> redrawBoard();
                 case "highlight" -> highlightMoves(params);
+                case "move" -> makeMove(params);
                 case "leave" -> backToGameMenu();
                 case "quit" -> quitAndLogout();
                 default -> help();
@@ -67,6 +70,22 @@ public class InGameUI implements ClientUI {
         throw new DataAccessException("<SQUARE> must be in the form a1");
     }
 
+    private String makeMove(String[] params) throws DataAccessException {
+        if (params.length == 1) {
+            ChessPosition startPosition = getSquare(params[0].substring(0, 2));
+            ChessPosition endPosition = getSquare(params[0].substring(4,6));
+            ChessPiece.PieceType promotionPiece;
+            if (params[0].length() > 7) {
+                promotionPiece = getPromoPiece(params[0].substring(7));
+            } else {promotionPiece = null;}
+
+            ChessMove move = new ChessMove(startPosition, endPosition, promotionPiece);
+            ws.makeAMove(authToken, gameData.gameID(), color, move);
+            return RESET_BG_COLOR;
+        }
+        throw new DataAccessException("<MOVE> must be in the form of a7->a8:queen");
+    }
+
     private ChessPosition getSquare(String square) throws DataAccessException {
         try {
             char colChar = square.charAt(0);
@@ -83,6 +102,17 @@ public class InGameUI implements ClientUI {
         } catch (Exception e) {
             throw new DataAccessException("<SQUARE> must be in the form of a1");
         }
+    }
+
+    private ChessPiece.PieceType getPromoPiece(String pieceString) throws DataAccessException {
+        String piece = pieceString.toLowerCase();
+        return switch (piece) {
+            case "queen" -> ChessPiece.PieceType.QUEEN;
+            case "bishop" -> ChessPiece.PieceType.BISHOP;
+            case "rook", "castle" -> ChessPiece.PieceType.ROOK;
+            case "knight", "horsey", "horse" -> ChessPiece.PieceType.KNIGHT;
+            default -> throw new DataAccessException("Promotion piece must be queen, bishop, rook, or knight");
+        };
     }
 
     private String backToGameMenu() {
@@ -107,6 +137,9 @@ public class InGameUI implements ClientUI {
                 SET_TEXT_COLOR_LIGHT_GREY + "- redraw chessboard \n" +
                 SET_TEXT_COLOR_BLUE + "highlight <SQUARE>" +
                 SET_TEXT_COLOR_LIGHT_GREY + "- select a square (in the form of a1) and see that piece's legal moves \n" +
+                SET_TEXT_COLOR_BLUE + "move <MOVE>" +
+                SET_TEXT_COLOR_LIGHT_GREY + "- make a move in the form of a7->a8:queen (start position, end position, promotion piece) \n" +
+                "only include :piece if a pawn is promoting at other side of board" +
                 SET_TEXT_COLOR_BLUE + "menu " +
                 SET_TEXT_COLOR_LIGHT_GREY + "- back to game menu \n" +
                 SET_TEXT_COLOR_BLUE + "quit " +
