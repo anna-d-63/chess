@@ -74,11 +74,12 @@ public class Repl implements ServerMessageObserver {
 
     private void loadGame(LoadGameMessage message) {
         String gameJson = message.getGame();
-        ChessGame.TeamColor color = message.getColor();
+        ChessGame.TeamColor color = inGame.getColor();
         if (color == null) {
             color = ChessGame.TeamColor.WHITE;
         }
         ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
+        inGame.setUpdatedGame(game);
         System.out.println();
         new DrawnChessBoard(game, color).createBoard(null);
     }

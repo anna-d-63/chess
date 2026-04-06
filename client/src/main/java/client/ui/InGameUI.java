@@ -180,6 +180,11 @@ public class InGameUI implements ClientUI {
         this.gameData = gameData;
     }
 
+    public void setUpdatedGame(ChessGame game) {
+        this.gameData = new GameData(gameData.gameID(), gameData.whiteUsername(),
+                                    gameData.blackUsername(), gameData.gameName(), game);
+    }
+
     public ChessGame.TeamColor getColor() {
         return color;
     }
