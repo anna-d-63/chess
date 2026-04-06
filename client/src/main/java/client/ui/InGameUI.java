@@ -139,7 +139,7 @@ public class InGameUI implements ClientUI {
                 SET_TEXT_COLOR_LIGHT_GREY + "- select a square (in the form of a1) and see that piece's legal moves \n" +
                 SET_TEXT_COLOR_BLUE + "move <MOVE>" +
                 SET_TEXT_COLOR_LIGHT_GREY + "- make a move in the form of a7->a8:queen (start position, end position, promotion piece) \n" +
-                "only include :piece if a pawn is promoting at other side of board" +
+                "\t \t only include :piece if a pawn is promoting at other side of board \n" +
                 SET_TEXT_COLOR_BLUE + "menu " +
                 SET_TEXT_COLOR_LIGHT_GREY + "- back to game menu \n" +
                 SET_TEXT_COLOR_BLUE + "quit " +

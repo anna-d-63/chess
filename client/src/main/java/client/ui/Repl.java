@@ -84,7 +84,7 @@ public class Repl implements ServerMessageObserver {
     }
 
     private void displayError(ErrorMessage message) {
-        System.out.println(RESET_BG_COLOR + SET_TEXT_COLOR_RED + message);
+        System.out.println(RESET_BG_COLOR + SET_TEXT_COLOR_RED + message.getErrorMessage());
     }
 
     private ClientUI switchUI (ClientUI currentUI) {

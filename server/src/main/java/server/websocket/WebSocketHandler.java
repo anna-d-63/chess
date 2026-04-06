@@ -153,7 +153,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         ChessGame game = gameData.game();
         ChessGame.TeamColor teamTurn = game.getTeamTurn();
         if (theirColor != teamTurn) {
-            throw new DataAccessException("Error: can only make a move on your turn.");
+            throw new DataAccessException("can only make a move on your turn.");
         }
     }
 
@@ -162,7 +162,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         ChessPosition startPos = move.getStartPosition();
         Collection<ChessMove> validMoves = game.validMoves(startPos);
         if (!validMoves.contains(move)) {
-            throw new DataAccessException("Error: not a valid move.");
+            throw new DataAccessException("not a valid move.");
         }
     }
 
