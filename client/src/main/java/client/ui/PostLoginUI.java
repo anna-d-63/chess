@@ -145,9 +145,11 @@ public class PostLoginUI implements ClientUI {
     }
 
     @Override
-    public String firstLine() {
+    public String firstLine() throws DataAccessException {
         gameData = null;
-        return SET_TEXT_COLOR_MAGENTA + "Execute any of the following commands for chess play";
+        return SET_TEXT_COLOR_MAGENTA + "Here are the available chess games: \n" +
+                SET_TEXT_COLOR_LIGHT_GREY + listAllGames() + "\n" +
+                SET_TEXT_COLOR_MAGENTA + "Execute any of the following commands for chess play";
     }
 
     @Override

@@ -26,7 +26,7 @@ public class Repl implements ServerMessageObserver {
         inGame = new InGameUI(port, ws);
     }
 
-    public void run() {
+    public void run() throws DataAccessException {
         ClientUI ui = preLogin;
         System.out.println(ui.firstLine());
         System.out.print(ui.help());

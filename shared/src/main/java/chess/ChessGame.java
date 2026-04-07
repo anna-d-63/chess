@@ -15,10 +15,12 @@ public class ChessGame {
 
     private ChessBoard board = new ChessBoard();
     private TeamColor teamTurn;
+    public boolean gameOver;
 
     public ChessGame() {
         this.board.resetBoard();
         this.teamTurn = TeamColor.WHITE;
+        this.gameOver = false;
     }
 
     /**
@@ -55,6 +57,7 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = board.getPiece(startPosition);
 
+        if (gameOver) {return List.of();}
         if (piece == null){return List.of();}
 
         Collection<ChessMove> pieceMoves = piece.pieceMoves(board, startPosition);
@@ -175,6 +178,7 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         boolean check = isInCheck(teamColor);
         boolean valid = anyValidMoves(teamColor);
+        this.gameOver = true;
         return check && !valid;
     }
 
@@ -188,6 +192,7 @@ public class ChessGame {
     public boolean isInStalemate(TeamColor teamColor) {
         boolean check = isInCheck(teamColor);
         boolean valid = anyValidMoves(teamColor);
+        this.gameOver = true;
         return !check && !valid;
     }
 
@@ -226,6 +231,10 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return board;
+    }
+
+    public void endGame() {
+        this.gameOver = true;
     }
 
     @Override

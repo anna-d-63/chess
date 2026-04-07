@@ -119,7 +119,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connectionManager.broadcast(command, session, message, NOTIFICATION);
     }
 
-    private void resign(Session session, String username, UserGameCommand command) {}
+    private void resign(Session session, String username, UserGameCommand command) throws DataAccessException, IOException {
+        gameService.noMoreLegalMoves(command.getAuthToken(), command.getGameID());
+        String message = serializer.toJson(
+                new NotificationMessage(String.format("%s resigned from the game. GAME OVER.", username)));
+        connectionManager.broadcast(command, session, message, NOTIFICATION);
+    }
 
     private String getUsername(String authToken) throws DataAccessException {
         AuthData authData = userService.getAuthData(authToken);

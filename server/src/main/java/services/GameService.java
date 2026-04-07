@@ -74,6 +74,21 @@ public class GameService {
         }
     }
 
+    public void noMoreLegalMoves(String authToken, int gameID) throws DataAccessException {
+        AuthData authData = authorizeUser(authToken);
+        GameData gameData = gameDAO.getGame(gameID);
+        if (gameData == null){
+            throw new BadRequestResponse("bad request");
+        }
+        if (gameData.whiteUsername() != null && authData.username().equals(gameData.whiteUsername()) ||
+                gameData.blackUsername() != null && authData.username().equals(gameData.blackUsername())) {
+            gameData.game().gameOver = true;
+            gameDAO.setGame(gameID, gameData.game());
+        } else {
+            throw new BadRequestResponse("Observer can't resign");
+        }
+    }
+
     public GameData getGame(String authToken, int gameID) throws DataAccessException {
         authorizeUser(authToken);
         GameData game = gameDAO.getGame(gameID);

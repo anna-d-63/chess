@@ -14,6 +14,7 @@ import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Scanner;
 
 import static client.ui.EscapeSequences.*;
 import static client.ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
@@ -42,6 +43,7 @@ public class InGameUI implements ClientUI {
                 case "highlight" -> highlightMoves(params);
                 case "move" -> makeMove(params);
                 case "leave" -> backToGameMenu();
+                case "resign" -> resign();
                 case "quit" -> quitAndLogout();
                 default -> help();
             };
@@ -118,10 +120,29 @@ public class InGameUI implements ClientUI {
     private String backToGameMenu() throws DataAccessException {
         ws.leaveGame(authToken, gameData.gameID(), color);
         gameData = null;
-        return "";
+        return RESET_BG_COLOR;
+    }
+
+    private String resign() throws DataAccessException {
+        if (wantToResign()) {
+            ws.resignFromGame(authToken, getGameData().gameID(), color);
+            gameData = null;
+        }
+        return RESET_BG_COLOR;
+    }
+
+    private boolean wantToResign() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Are you sure you want to resign? <YES|NO>");
+        String answer = scanner.nextLine();
+        return switch(answer.toLowerCase()) {
+            case "yes", "y", "yeah", "you betcha" -> true;
+            default -> false;
+        };
     }
 
     private String quitAndLogout() throws DataAccessException {
+        ws.leaveGame(authToken, gameData.gameID(), color);
         var logoutRequest = new LogoutRequest(authToken);
         facade.logout(logoutRequest);
         return "quit";
@@ -141,7 +162,7 @@ public class InGameUI implements ClientUI {
                 SET_TEXT_COLOR_BLUE + "move <MOVE>" +
                 SET_TEXT_COLOR_LIGHT_GREY + "- make a move in the form of a7->a8:queen (start position, end position, promotion piece) \n" +
                 "\t \t only include :piece if a pawn is promoting at other side of board \n" +
-                SET_TEXT_COLOR_BLUE + "menu " +
+                SET_TEXT_COLOR_BLUE + "leave " +
                 SET_TEXT_COLOR_LIGHT_GREY + "- back to game menu \n" +
                 SET_TEXT_COLOR_BLUE + "quit " +
                 SET_TEXT_COLOR_LIGHT_GREY + "- leave the application \n" +
