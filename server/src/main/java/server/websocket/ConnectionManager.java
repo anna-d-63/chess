@@ -35,9 +35,8 @@ public class ConnectionManager {
                 if (type == NOTIFICATION) {
                     if (!c.equals(theirSession)) {
                         c.getRemote().sendString(serverMessage);
-                    } else if (commandType == RESIGN && c.equals(theirSession)) {
-                        c.getRemote().sendString(new Gson().toJson(
-                                new NotificationMessage("You resigned from the game. GAME OVER.")));
+                    } else if (( commandType == RESIGN || statusMessage(serverMessage)) && c.equals(theirSession)) {
+                        c.getRemote().sendString(serverMessage);
                     }
                 } else if (type == LOAD_GAME) {
                     if ((commandType == CONNECT && c.equals(theirSession)) || commandType == MAKE_MOVE) {
@@ -51,5 +50,13 @@ public class ConnectionManager {
         if (commandType == LEAVE) {
             connections.get(gameID).remove(theirSession);
         }
+    }
+
+    private boolean statusMessage(String serverMessage) {
+        NotificationMessage notification = new Gson().fromJson(serverMessage, NotificationMessage.class);
+        String message = notification.getMessage();
+        return message.contains("check") ||
+                message.contains("checkmate") ||
+                message.contains("stalemate");
     }
 }

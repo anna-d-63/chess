@@ -204,14 +204,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connectionManager.broadcast(command, session, checkMessage, NOTIFICATION);
         } else if (updatedGame.isInCheckmate(otherColor)) {
             var checkmateMessage =
-                    serializer.toJson(new NotificationMessage(String.format("%s is in checkmate", otherUsername)));
+                    serializer.toJson(new NotificationMessage(String.format("%s is in checkmate. GAME OVER", otherUsername)));
             connectionManager.broadcast(command, session, checkmateMessage, NOTIFICATION);
-            //allow no more moves to be made
         } else if (updatedGame.isInStalemate(otherColor)) {
             var stalemateMessage =
-                    serializer.toJson(new NotificationMessage("stalemate, bummer"));
+                    serializer.toJson(new NotificationMessage("stalemate, bummer. GAME OVER"));
             connectionManager.broadcast(command, session, stalemateMessage, NOTIFICATION);
-            //allow no more moves to be made
         }
     }
 
