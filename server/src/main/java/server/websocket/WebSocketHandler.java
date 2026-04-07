@@ -132,9 +132,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private void setColor(UserGameCommand command, String username, int gameID, String authToken) throws DataAccessException {
         if (command.getColor() != null) {return;}
         GameData gameData = gameService.getGame(authToken, gameID);
-        if (gameData.whiteUsername().equals(username)) {
+        if (gameData.whiteUsername() != null && gameData.whiteUsername().equals(username)) {
             command.setColor(WHITE);
-        } else if (gameData.blackUsername().equals(username)) {
+        } else if (gameData.whiteUsername() != null && gameData.blackUsername().equals(username)) {
             command.setColor(BLACK);
         }
     }

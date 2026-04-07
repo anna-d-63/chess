@@ -11,8 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import static websocket.commands.UserGameCommand.CommandType.CONNECT;
-import static websocket.commands.UserGameCommand.CommandType.MAKE_MOVE;
+import static websocket.commands.UserGameCommand.CommandType.*;
 import static websocket.messages.ServerMessage.ServerMessageType.*;
 
 public class ConnectionManager {
@@ -43,6 +42,9 @@ public class ConnectionManager {
                     c.getRemote().sendString(serverMessage);
                 }
             }
+        }
+        if (commandType == LEAVE) {
+            connections.get(gameID).remove(theirSession);
         }
     }
 }
