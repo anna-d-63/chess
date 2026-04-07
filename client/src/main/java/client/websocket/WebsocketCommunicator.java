@@ -51,15 +51,6 @@ public class WebsocketCommunicator extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    public void connectToGame(String authToken, int gameID, ChessGame.TeamColor color) throws DataAccessException {
-        try {
-            var command = new UserGameCommand(CONNECT, authToken, gameID, color);
-            this.session.getBasicRemote().sendText(serializer.toJson(command));
-        } catch (IOException e) {
-            throw new DataAccessException(e.getMessage());
-        }
-    }
-
     public void makeAMove(
             String authToken, int gameID, ChessGame.TeamColor color, ChessMove move) throws DataAccessException {
         try {
@@ -70,18 +61,10 @@ public class WebsocketCommunicator extends Endpoint {
         }
     }
 
-    public void leaveGame(String authToken, int gameID, ChessGame.TeamColor color) throws DataAccessException {
+    public void sendUserGameCommand
+            (String authToken, int gameID, ChessGame.TeamColor color, UserGameCommand.CommandType type) throws DataAccessException {
         try {
-            var command = new UserGameCommand(LEAVE, authToken, gameID, color);
-            this.session.getBasicRemote().sendText(serializer.toJson(command));
-        } catch (IOException e) {
-            throw new DataAccessException(e.getMessage());
-        }
-    }
-
-    public void resignFromGame(String authToken, int gameID, ChessGame.TeamColor color) throws DataAccessException {
-        try {
-            var command = new UserGameCommand(RESIGN, authToken, gameID, color);
+            var command = new UserGameCommand(type, authToken, gameID, color);
             this.session.getBasicRemote().sendText(serializer.toJson(command));
         } catch (IOException e) {
             throw new DataAccessException(e.getMessage());

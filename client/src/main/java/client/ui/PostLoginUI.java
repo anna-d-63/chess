@@ -16,6 +16,7 @@ import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
 import static client.ui.EscapeSequences.*;
 import static client.ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
+import static websocket.commands.UserGameCommand.CommandType.CONNECT;
 
 public class PostLoginUI implements ClientUI {
 
@@ -102,7 +103,7 @@ public class PostLoginUI implements ClientUI {
             gameData = listedGames.get(counter);
             if (params[1].equalsIgnoreCase("black")){color = BLACK;}
             else {color = WHITE;}
-            ws.connectToGame(authToken, gameID, color);
+            ws.sendUserGameCommand(authToken, gameID, color, CONNECT);
             return String.format("You are playing %s", gameData.gameName());
         }
         throw new DataAccessException("Expected: <ID> [WHITE|BLACK]");
@@ -123,7 +124,7 @@ public class PostLoginUI implements ClientUI {
             }
             gameData = listedGames.get(counter);
             color = WHITE;
-            ws.connectToGame(authToken, gameData.gameID(), null);
+            ws.sendUserGameCommand(authToken, gameData.gameID(), null, CONNECT);
             return String.format("You are observing %s", gameData.gameName());
         }
         throw new DataAccessException("Expected: <ID>");

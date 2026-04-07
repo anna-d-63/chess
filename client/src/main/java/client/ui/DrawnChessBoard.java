@@ -96,20 +96,12 @@ public class DrawnChessBoard {
 
                 for (int j = 7; j >= 0; j--) {
                     boolean even = (j % 2 == 1 && i % 2 == 0 || j % 2 == 0 && i % 2 == 1);
-                    if (even) {
-                        out.print(SET_BG_COLOR_TAN);
-                    } else {
-                        out.print(SET_BG_COLOR_BROWN);
-                    }
+                    setSquareColor(out, even);
                     if (startPosition != null && !endPositions.isEmpty()){
                         if (startHere(startPosition, i, j)){
                             out.print(SET_BG_COLOR_BLUE);
                         } else if (potentialMove(endPositions, i, j)) {
-                            if (even) {
-                                out.print(SET_BG_COLOR_GREEN);
-                            } else {
-                                out.print(SET_BG_COLOR_DARK_GREEN);
-                            }
+                            setHighlightSquareColor(out, even);
                         }
                     }
 
@@ -187,5 +179,21 @@ public class DrawnChessBoard {
     private static void setBlack(PrintStream out) {
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_BLACK);
+    }
+
+    private void setHighlightSquareColor(PrintStream out, boolean even) {
+        if (even) {
+            out.print(SET_BG_COLOR_GREEN);
+        } else {
+            out.print(SET_BG_COLOR_DARK_GREEN);
+        }
+    }
+
+    private void setSquareColor(PrintStream out, boolean even) {
+        if (even) {
+            out.print(SET_BG_COLOR_TAN);
+        } else {
+            out.print(SET_BG_COLOR_BROWN);
+        }
     }
 }

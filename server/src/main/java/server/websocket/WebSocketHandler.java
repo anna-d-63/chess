@@ -87,8 +87,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         String message = serializer.toJson(notificationMessage);
         connectionManager.broadcast(command, session, message, NOTIFICATION);
 
-        String game_message = serializer.toJson(new LoadGameMessage(serializer.toJson(gameData.game()), command.getColor()));
-        connectionManager.broadcast(command, session, game_message, LOAD_GAME);
+        String gameMessage = serializer.toJson(new LoadGameMessage(serializer.toJson(gameData.game()), command.getColor()));
+        connectionManager.broadcast(command, session, gameMessage, LOAD_GAME);
     }
 
     private void makeMove(Session session, String username, MakeMoveCommand command)
@@ -100,8 +100,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         ChessGame updatedGame = updateGame(command.getMove(), gameData);
         gameService.setGame(command.getGameID(), updatedGame);
 
-        String game_message = serializer.toJson(new LoadGameMessage(serializer.toJson(updatedGame), command.getColor()));
-        connectionManager.broadcast(command, session, game_message, LOAD_GAME);
+        String gameMessage = serializer.toJson(new LoadGameMessage(serializer.toJson(updatedGame), command.getColor()));
+        connectionManager.broadcast(command, session, gameMessage, LOAD_GAME);
 
         String formattedMove = formatMove(command.getMove());
         var message = serializer.toJson(new NotificationMessage(String.format("%s moved %s", username, formattedMove)));

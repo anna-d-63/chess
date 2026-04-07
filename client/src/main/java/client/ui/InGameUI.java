@@ -16,6 +16,7 @@ import java.util.Scanner;
 
 import static client.ui.EscapeSequences.*;
 import static client.ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
+import static websocket.commands.UserGameCommand.CommandType.*;
 
 public class InGameUI implements ClientUI {
 
@@ -116,14 +117,14 @@ public class InGameUI implements ClientUI {
     }
 
     private String backToGameMenu() throws DataAccessException {
-        ws.leaveGame(authToken, gameData.gameID(), color);
+        ws.sendUserGameCommand(authToken, gameData.gameID(), color, LEAVE);
         gameData = null;
         return RESET_BG_COLOR;
     }
 
     private String resign() throws DataAccessException {
         if (wantToResign()) {
-            ws.resignFromGame(authToken, getGameData().gameID(), color);
+            ws.sendUserGameCommand(authToken, gameData.gameID(), color, RESIGN);
         }
         return RESET_BG_COLOR;
     }
@@ -139,7 +140,7 @@ public class InGameUI implements ClientUI {
     }
 
     private String quitAndLogout() throws DataAccessException {
-        ws.leaveGame(authToken, gameData.gameID(), color);
+        ws.sendUserGameCommand(authToken, gameData.gameID(), color, LEAVE);
         var logoutRequest = new LogoutRequest(authToken);
         facade.logout(logoutRequest);
         return "quit";
