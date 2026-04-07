@@ -109,32 +109,15 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         var message = serializer.toJson(new NotificationMessage(String.format("%s moved %s", username, formattedMove)));
         connectionManager.broadcast(command, session, message, NOTIFICATION);
 
-
-        ChessGame.TeamColor otherColor;
-        if (command.getColor() == WHITE) {
-            otherColor = BLACK;
-        } else {otherColor = WHITE;}
-        //TODO: get other username using otherColor and gameData
-
-        if (updatedGame.isInCheck(otherColor) && !updatedGame.isInCheckmate(otherColor)) {
-            var checkMessage =
-                    serializer.toJson(new NotificationMessage(String.format("%s is in check", "otherUsername")));
-            connectionManager.broadcast(command, session, checkMessage, NOTIFICATION);
-        } else if (updatedGame.isInCheckmate(otherColor)) {
-            var checkmateMessage =
-                    serializer.toJson(new NotificationMessage(String.format("%s is in checkmate", "otherUsername")));
-            connectionManager.broadcast(command, session, checkmateMessage, NOTIFICATION);
-            //allow no more moves to be made
-        } else if (updatedGame.isInStalemate(otherColor)) {
-            var stalemateMessage =
-                    serializer.toJson(new NotificationMessage("stalemate, bummer"));
-            connectionManager.broadcast(command, session, stalemateMessage, NOTIFICATION);
-            //allow no more moves to be made
-        }
-        //TODO: do everything on the client side for make move
+        sendStatusNotification(command, updatedGame, gameData, session);
     }
 
-    private void leaveGame(Session session, String username, UserGameCommand command) {}
+    private void leaveGame(Session session, String username, UserGameCommand command)
+            throws DataAccessException, IOException {
+        gameService.leaveGame(command.getAuthToken(), command.getGameID());
+        String message = serializer.toJson(new NotificationMessage(String.format("%s left the game", username)));
+        connectionManager.broadcast(command, session, message, NOTIFICATION);
+    }
 
     private void resign(Session session, String username, UserGameCommand command) {}
 
@@ -198,6 +181,35 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             str.append(promoPiece);
         }
         return str.toString();
+    }
+
+    private void sendStatusNotification(
+            MakeMoveCommand command, ChessGame updatedGame, GameData gameData, Session session) throws IOException {
+        ChessGame.TeamColor otherColor;
+        String otherUsername;
+        if (command.getColor() == WHITE) {
+            otherColor = BLACK;
+            otherUsername = gameData.blackUsername();
+        } else {
+            otherColor = WHITE;
+            otherUsername = gameData.whiteUsername();
+        }
+
+        if (updatedGame.isInCheck(otherColor) && !updatedGame.isInCheckmate(otherColor)) {
+            var checkMessage =
+                    serializer.toJson(new NotificationMessage(String.format("%s is in check", otherUsername)));
+            connectionManager.broadcast(command, session, checkMessage, NOTIFICATION);
+        } else if (updatedGame.isInCheckmate(otherColor)) {
+            var checkmateMessage =
+                    serializer.toJson(new NotificationMessage(String.format("%s is in checkmate", otherUsername)));
+            connectionManager.broadcast(command, session, checkmateMessage, NOTIFICATION);
+            //allow no more moves to be made
+        } else if (updatedGame.isInStalemate(otherColor)) {
+            var stalemateMessage =
+                    serializer.toJson(new NotificationMessage("stalemate, bummer"));
+            connectionManager.broadcast(command, session, stalemateMessage, NOTIFICATION);
+            //allow no more moves to be made
+        }
     }
 
     private NotificationMessage notifyEm(String username, ChessGame.TeamColor color) {

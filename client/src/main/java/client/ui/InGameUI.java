@@ -115,7 +115,8 @@ public class InGameUI implements ClientUI {
         };
     }
 
-    private String backToGameMenu() {
+    private String backToGameMenu() throws DataAccessException {
+        ws.leaveGame(authToken, gameData.gameID(), color);
         gameData = null;
         return "";
     }

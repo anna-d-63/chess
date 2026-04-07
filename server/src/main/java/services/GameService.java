@@ -61,6 +61,19 @@ public class GameService {
         }
     }
 
+    public void leaveGame(String authToken, int gameID) throws DataAccessException {
+        AuthData authData = authorizeUser(authToken);
+        GameData gameData = gameDAO.getGame(gameID);
+        if (gameData == null){
+            throw new BadRequestResponse("bad request");
+        }
+        if (authData.username().equals(gameData.whiteUsername())) {
+            gameDAO.updateGame("WHITE", null, gameID);
+        } else if (authData.username().equals(gameData.blackUsername())) {
+            gameDAO.updateGame("BLACK", null, gameID);
+        }
+    }
+
     public GameData getGame(String authToken, int gameID) throws DataAccessException {
         authorizeUser(authToken);
         GameData game = gameDAO.getGame(gameID);

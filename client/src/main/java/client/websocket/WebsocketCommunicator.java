@@ -15,8 +15,7 @@ import websocket.messages.ServerMessage;
 import java.io.IOException;
 import java.net.URI;
 
-import static websocket.commands.UserGameCommand.CommandType.CONNECT;
-import static websocket.commands.UserGameCommand.CommandType.MAKE_MOVE;
+import static websocket.commands.UserGameCommand.CommandType.*;
 import static websocket.messages.ServerMessage.ServerMessageType.*;
 
 public class WebsocketCommunicator extends Endpoint {
@@ -71,9 +70,23 @@ public class WebsocketCommunicator extends Endpoint {
         }
     }
 
-    public void leaveGame(String authToken, int gameID, ChessGame.TeamColor color) throws DataAccessException {}
+    public void leaveGame(String authToken, int gameID, ChessGame.TeamColor color) throws DataAccessException {
+        try {
+            var command = new UserGameCommand(LEAVE, authToken, gameID, color);
+            this.session.getBasicRemote().sendText(serializer.toJson(command));
+        } catch (IOException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
 
-    public void resignFromGame(String authToken, int gameID, ChessGame.TeamColor color) throws DataAccessException {}
+    public void resignFromGame(String authToken, int gameID, ChessGame.TeamColor color) throws DataAccessException {
+        try {
+            var command = new UserGameCommand(RESIGN, authToken, gameID, color);
+            this.session.getBasicRemote().sendText(serializer.toJson(command));
+        } catch (IOException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
 
     private void handleMessage(String messageString) {
         try {

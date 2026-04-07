@@ -42,7 +42,7 @@ public class Repl implements ServerMessageObserver {
                 System.out.println(SET_TEXT_COLOR_LIGHT_GREY + result);
                 ClientUI newUI = switchUI(ui);
                 if (!newUI.equals(ui)) {
-                    System.out.println();
+                    System.out.println(RESET_BG_COLOR);
                     System.out.println(newUI.firstLine());
                     System.out.print(newUI.help());
                 }
