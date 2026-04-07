@@ -126,7 +126,6 @@ public class InGameUI implements ClientUI {
     private String resign() throws DataAccessException {
         if (wantToResign()) {
             ws.resignFromGame(authToken, getGameData().gameID(), color);
-            gameData = null;
         }
         return RESET_BG_COLOR;
     }

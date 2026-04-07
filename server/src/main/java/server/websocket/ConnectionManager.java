@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -32,8 +33,13 @@ public class ConnectionManager {
         Set<Session> inThisGame = connections.get(gameID);
         for (Session c : inThisGame) {
             if (c.isOpen()) {
-                if (type == NOTIFICATION && !c.equals(theirSession)) {
-                    c.getRemote().sendString(serverMessage);
+                if (type == NOTIFICATION) {
+                    if (!c.equals(theirSession)) {
+                        c.getRemote().sendString(serverMessage);
+                    } else if (commandType == RESIGN && c.equals(theirSession)) {
+                        c.getRemote().sendString(new Gson().toJson(
+                                new NotificationMessage("You resigned from the game. GAME OVER.")));
+                    }
                 } else if (type == LOAD_GAME) {
                     if ((commandType == CONNECT && c.equals(theirSession)) || commandType == MAKE_MOVE) {
                         c.getRemote().sendString(serverMessage);

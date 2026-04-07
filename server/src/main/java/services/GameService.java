@@ -80,6 +80,9 @@ public class GameService {
         if (gameData == null){
             throw new BadRequestResponse("bad request");
         }
+        if (gameData.game().gameOver) {
+            throw new BadRequestResponse(("Can't resign if game is over."));
+        }
         if (gameData.whiteUsername() != null && authData.username().equals(gameData.whiteUsername()) ||
                 gameData.blackUsername() != null && authData.username().equals(gameData.blackUsername())) {
             gameData.game().gameOver = true;

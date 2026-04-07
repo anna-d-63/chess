@@ -178,7 +178,9 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         boolean check = isInCheck(teamColor);
         boolean valid = anyValidMoves(teamColor);
-        this.gameOver = true;
+        if (check && !valid) {
+            this.gameOver = true;
+        }
         return check && !valid;
     }
 
@@ -192,7 +194,9 @@ public class ChessGame {
     public boolean isInStalemate(TeamColor teamColor) {
         boolean check = isInCheck(teamColor);
         boolean valid = anyValidMoves(teamColor);
-        this.gameOver = true;
+        if (!check && !valid) {
+            this.gameOver = true;
+        }
         return !check && !valid;
     }
 
