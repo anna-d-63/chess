@@ -1,9 +1,6 @@
 package server.websocket;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
-import chess.InvalidMoveException;
+import chess.*;
 import com.google.gson.Gson;
 import exceptions.DataAccessException;
 import io.javalin.http.UnauthorizedResponse;
@@ -184,7 +181,23 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private String formatMove(ChessMove move) {
-        return "blank";
+        Character[] cols = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+
+        ChessPosition startPos = move.getStartPosition();
+        ChessPosition endPos = move.getEndPosition();
+        ChessPiece.PieceType promoPiece = move.getPromotionPiece();
+
+        var str = new StringBuilder();
+        str.append(cols[startPos.getColumn()-1]);
+        str.append(startPos.getRow());
+        str.append("->");
+        str.append(cols[endPos.getColumn()-1]);
+        str.append(endPos.getRow());
+        if (promoPiece != null) {
+            str.append(':');
+            str.append(promoPiece);
+        }
+        return str.toString();
     }
 
     private NotificationMessage notifyEm(String username, ChessGame.TeamColor color) {
