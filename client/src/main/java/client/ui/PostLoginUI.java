@@ -2,12 +2,10 @@ package client.ui;
 
 import chess.ChessGame;
 import client.ServerFacade;
-import client.websocket.ServerMessageObserver;
 import client.websocket.WebsocketCommunicator;
 import exceptions.DataAccessException;
 import model.GameData;
 import requestandresult.*;
-import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
 import java.util.Collection;

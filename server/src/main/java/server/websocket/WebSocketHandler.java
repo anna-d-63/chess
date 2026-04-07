@@ -9,7 +9,6 @@ import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.jetbrains.annotations.NotNull;
-import requestandresult.ListGamesRequest;
 import services.GameService;
 import services.UserService;
 import websocket.commands.MakeMoveCommand;
@@ -17,7 +16,6 @@ import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -78,7 +76,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     @Override
-    public void handleClose(WsCloseContext ctx) {
+    public void handleClose(@NotNull WsCloseContext ctx) {
         System.out.println("Websocket closed");
     }
 

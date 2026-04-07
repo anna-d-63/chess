@@ -5,12 +5,10 @@ import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import client.ServerFacade;
-import client.websocket.ServerMessageObserver;
 import client.websocket.WebsocketCommunicator;
 import exceptions.DataAccessException;
 import model.GameData;
 import requestandresult.LogoutRequest;
-import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
 import java.util.Objects;

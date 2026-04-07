@@ -25,14 +25,14 @@ public class GameService {
 
     public ListGamesResult listGames(ListGamesRequest request) throws DataAccessException {
         checkNull(request);
-        AuthData authData = authorizeUser(request.authToken());
+        authorizeUser(request.authToken());
         Collection<GameData> games = gameDAO.listGames();
         return new ListGamesResult(games);
     }
 
     public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException {
         checkNull(request);
-        AuthData authData = authorizeUser(request.authToken());
+        authorizeUser(request.authToken());
         GameData gameData = gameDAO.createGame(request.gameName());
         return new CreateGameResult(gameData.gameID());
     }
@@ -85,7 +85,7 @@ public class GameService {
         }
         if (gameData.whiteUsername() != null && authData.username().equals(gameData.whiteUsername()) ||
                 gameData.blackUsername() != null && authData.username().equals(gameData.blackUsername())) {
-            gameData.game().gameOver = true;
+            gameData.game().endGame();
             gameDAO.setGame(gameID, gameData.game());
         } else {
             throw new BadRequestResponse("Observer can't resign");
