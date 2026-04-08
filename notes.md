@@ -222,3 +222,10 @@ maybe its a websocket notification. need a flag so you can't make a move after t
 need to know who is in each game. have a map that is keyed by game id and list of people in the game.
 
 this phase takes the longest, get started SOON. you are not supposed to add another web api
+
+            //make sure it isn't null before this line
+//            if (gameData.game().getBoard().getPiece(startPosition).getPieceType() == PAWN &&
+//                    (startPosition.getRow() == 8 || startPosition.getRow() == 1) &&
+//                params[0].charAt(6) != ':' && params[0].length() < 11){
+//                throw new DataAccessException("Must include promotion piece");
+//            }

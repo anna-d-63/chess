@@ -107,7 +107,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         var message = serializer.toJson(new NotificationMessage(String.format("%s moved %s", username, formattedMove)));
         connectionManager.broadcast(command, session, message, NOTIFICATION);
 
-        sendStatusNotification(command, updatedGame, gameData, session);
+        sendStatusNotification(command, username, updatedGame, gameData, session);
     }
 
     private void leaveGame(Session session, String username, UserGameCommand command)
@@ -187,7 +187,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void sendStatusNotification(
-            MakeMoveCommand command, ChessGame updatedGame, GameData gameData, Session session) throws IOException {
+            MakeMoveCommand command, String username, ChessGame updatedGame, GameData gameData, Session session)
+            throws IOException, DataAccessException {
+
         ChessGame.TeamColor otherColor;
         String otherUsername;
         if (command.getColor() == WHITE) {
@@ -203,12 +205,15 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     serializer.toJson(new NotificationMessage(String.format("%s is in check", otherUsername)));
             connectionManager.broadcast(command, session, checkMessage, NOTIFICATION);
         } else if (updatedGame.isInCheckmate(otherColor)) {
+            gameService.noMoreLegalMoves(command.getAuthToken(), command.getGameID());
             var checkmateMessage =
                     serializer.toJson(new NotificationMessage(String.format("%s is in checkmate. GAME OVER", otherUsername)));
             connectionManager.broadcast(command, session, checkmateMessage, NOTIFICATION);
         } else if (updatedGame.isInStalemate(otherColor)) {
+            gameService.noMoreLegalMoves(command.getAuthToken(), command.getGameID());
             var stalemateMessage =
-                    serializer.toJson(new NotificationMessage("stalemate, bummer. GAME OVER"));
+                    serializer.toJson(new NotificationMessage(
+                            String.format("%s put the game in stalemate. GAME OVER", username)));
             connectionManager.broadcast(command, session, stalemateMessage, NOTIFICATION);
         }
     }
@@ -222,5 +227,5 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
         return new NotificationMessage(message);
     }
-
+    //TODO: manually check frequently encountered problems and other functionality
 }

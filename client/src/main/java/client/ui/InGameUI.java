@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
+import static chess.ChessPiece.PieceType.PAWN;
 import static client.ui.EscapeSequences.*;
 import static client.ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
 import static websocket.commands.UserGameCommand.CommandType.*;
@@ -77,7 +78,7 @@ public class InGameUI implements ClientUI {
             ChessPosition endPosition = getSquare(params[0].substring(4,6));
             ChessPiece.PieceType promotionPiece;
             if (params[0].length() > 7) {
-                promotionPiece = getPromoPiece(params[0].substring(7));
+                promotionPiece = getPromoPiece(params[0].substring(7), startPosition);
             } else {promotionPiece = null;}
 
             ChessMove move = new ChessMove(startPosition, endPosition, promotionPiece);
@@ -105,7 +106,7 @@ public class InGameUI implements ClientUI {
         }
     }
 
-    private ChessPiece.PieceType getPromoPiece(String pieceString) throws DataAccessException {
+    private ChessPiece.PieceType getPromoPiece(String pieceString, ChessPosition startPosition) throws DataAccessException {
         String piece = pieceString.toLowerCase();
         return switch (piece) {
             case "queen" -> ChessPiece.PieceType.QUEEN;
@@ -158,29 +159,16 @@ public class InGameUI implements ClientUI {
                 SET_TEXT_COLOR_BLUE + "highlight <SQUARE>" +
                 SET_TEXT_COLOR_LIGHT_GREY + "- select a square (in the form of a1) and see that piece's legal moves \n" +
                 SET_TEXT_COLOR_BLUE + "move <MOVE>" +
-                SET_TEXT_COLOR_LIGHT_GREY + "- make a move in the form of a7->a8:queen (start position, end position, promotion piece) \n" +
+                SET_TEXT_COLOR_LIGHT_GREY + "- make a move in the form of a7->a8:queen (start position->end position:promotion piece) \n" +
                 "\t \t only include :piece if a pawn is promoting at other side of board \n" +
+                SET_TEXT_COLOR_BLUE + "resign " +
+                SET_TEXT_COLOR_LIGHT_GREY + "- forfeit the game \n" +
                 SET_TEXT_COLOR_BLUE + "leave " +
                 SET_TEXT_COLOR_LIGHT_GREY + "- back to game menu \n" +
                 SET_TEXT_COLOR_BLUE + "quit " +
                 SET_TEXT_COLOR_LIGHT_GREY + "- leave the application \n" +
                 SET_TEXT_COLOR_BLUE + "help " +
                 SET_TEXT_COLOR_LIGHT_GREY + "- view this menu again";
-        /*
-        help - help text
-        redraw chess board
-        leave - Removes the user from the game (whether they are playing or observing the game).
-            The client transitions back to the Post-Login UI.
-        Make move - Allow the user to input what move they want to make.
-                The board is updated to reflect the result of the move,
-                and the board automatically updates on all clients involved in the game.
-        Resign - Prompts the user to confirm they want to resign.
-                If they do, the user forfeits the game and the game is over.
-                Does not cause the user to leave the game.
-        Highlight legal moves - Allows the user to input the piece for which they want to highlight legal moves.
-                                The selected piece’s current square and all squares it can legally move to are highlighted.
-                                This is a local operation and has no effect on remote users’ screens.
-         */
     }
 
     public String getAuthToken() {
