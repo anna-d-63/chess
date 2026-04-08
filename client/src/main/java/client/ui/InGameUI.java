@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
-import static chess.ChessPiece.PieceType.PAWN;
 import static client.ui.EscapeSequences.*;
 import static client.ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
 import static websocket.commands.UserGameCommand.CommandType.*;
@@ -132,7 +131,7 @@ public class InGameUI implements ClientUI {
 
     private boolean wantToResign() {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Are you sure you want to resign? <YES|NO>");
+        System.out.print(RESET_BG_COLOR + SET_TEXT_COLOR_BLUE + "Are you sure you want to resign? <YES|NO>");
         String answer = scanner.nextLine();
         return switch(answer.toLowerCase()) {
             case "yes", "y", "yeah", "you betcha" -> true;

@@ -227,5 +227,4 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
         return new NotificationMessage(message);
     }
-    //TODO: manually check frequently encountered problems and other functionality
 }

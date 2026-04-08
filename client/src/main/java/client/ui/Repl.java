@@ -48,8 +48,8 @@ public class Repl implements ServerMessageObserver {
                 }
                 ui = newUI;
             } catch (Throwable e) {
-                var msg = e.toString();
-                System.out.print(msg);
+//                var msg = e.toString();
+                System.out.print(SET_TEXT_COLOR_RED + e.getMessage());
             }
         }
         System.out.println();

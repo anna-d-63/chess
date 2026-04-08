@@ -65,11 +65,13 @@ public class PostLoginUI implements ClientUI {
     private String listAllGames() throws DataAccessException {
         var listGamesRequest = new ListGamesRequest(authToken);
         ListGamesResult listGamesResult = facade.listGames(listGamesRequest);
+        StringBuilder sb = new StringBuilder();
+        sb.append(SET_TEXT_COLOR_MAGENTA + "Available games: \n" + SET_TEXT_COLOR_LIGHT_GREY);
         if (listGamesResult.games().isEmpty()) {
-            throw new DataAccessException("No games available to list");
+            sb.append("None \n");
+            return sb.toString();
         }
         Collection<GameData> games = listGamesResult.games();
-        StringBuilder sb = new StringBuilder();
         int counter = 1;
         listedGames.clear();
         for (GameData game : games) {
@@ -146,8 +148,7 @@ public class PostLoginUI implements ClientUI {
     @Override
     public String firstLine() throws DataAccessException {
         gameData = null;
-        return SET_TEXT_COLOR_MAGENTA + "Here are the available chess games: \n" +
-                SET_TEXT_COLOR_LIGHT_GREY + listAllGames() + "\n" +
+        return SET_TEXT_COLOR_LIGHT_GREY + listAllGames() + "\n" +
                 SET_TEXT_COLOR_MAGENTA + "Execute any of the following commands for chess play";
     }
 
